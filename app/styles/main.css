@@ -1,0 +1,345 @@
+/* =================================== */
+/*	Basic Style 
+/* =================================== */
+
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300);
+
+@font-face {
+    font-family: Helvetica;
+    src: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/164210/HelveticaNeue-UltraLight.otf) format('TrueType');
+  font-weight: 300;
+}
+
+body {
+	background-color: #F7F7F7;
+  font-family: 'Lato', sans-serif;
+}
+
+html, body {
+width: 100%;
+height: 100%;
+margin: 0px;
+padding: 0px;
+}
+
+.navbar {
+	margin-bottom: 0;
+}
+
+.canvas-bg {
+	background: -webkit-canvas(animation);
+}
+
+#canvas-div {
+	width: 100%;
+	height: 100%;
+  position: absolute;
+}
+
+.footer-pos {
+  position: fixed;
+  bottom: 0;
+  margin-bottom: 0;
+}
+
+.pos-absolute {
+  position: absolute;
+}
+
+.row {
+  margin: 0;
+}
+
+#main-text {
+  width: 100%;
+  top: 5%;
+  z-index: 1;
+  text-align: center;
+}
+
+canvas {
+	/*background-color: #2B2B2B;*/
+  
+	left: 0;
+	top: 0;
+
+  background: #FFF;
+  z-index: 0;
+  	
+}
+
+/* make keyframes that tell the start state and the end state of our object */
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.fade-in {
+  opacity:0;  /* make things invisible upon start */
+  -webkit-animation:fadeIn ease-in 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+  -moz-animation:fadeIn ease-in 1;
+  animation:fadeIn ease-in 1;
+
+  -webkit-animation-fill-mode:forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+  -moz-animation-fill-mode:forwards;
+  animation-fill-mode:forwards;
+
+  -webkit-animation-duration:1s;
+  -moz-animation-duration:1s;
+  animation-duration:1s;
+}
+
+.fade-in.zero {
+-webkit-animation-delay: 0.4s;
+-moz-animation-delay: 0.4s;
+animation-delay: 0.4s;
+}
+
+.fade-in.one {
+-webkit-animation-delay: 0.7s;
+-moz-animation-delay: 0.7s;
+animation-delay: 0.7s;
+}
+
+.fade-in.two {
+-webkit-animation-delay: 1.2s;
+-moz-animation-delay:1.2s;
+animation-delay: 1.2s;
+}
+
+.fade-in.three {
+-webkit-animation-delay: 1.6s;
+-moz-animation-delay: 1.6s;
+animation-delay: 1.6s;
+}
+
+
+/* -------------------------------- 
+
+Primary style
+
+-------------------------------- */
+
+#title-name {
+  font-size: 2em;
+}
+#subtitle {
+  font-size: 1.3em;
+}
+
+#logo-cool {
+  width: 220px;
+  height: 184px;
+  vertical-align: top;
+}
+
+@media screen and (max-height: 320px) {
+    #title-name {
+    font-size: 1.8em;
+    }
+    #subtitle {
+      font-size: 1em;
+    }
+    #logo-cool {
+      width: 50px;
+      height: 42px;
+    }
+    #canvas-div {
+      position: fixed;
+    }
+}
+
+
+/* --------------------------------
+
+  Overlay Menu  
+
+-------------------------------- */
+
+/* Overlay style */
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: block;
+  box-sizing: border-box;
+  background: -webkit-linear-gradient(rgba(244,92,67,0.85), rgba(231,51,73,0.85)); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(rgba(244,92,67,0.85), rgba(231,51,73,0.85));  /*For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(rgba(244,92,67,0.85), rgba(231,51,73,0.85)); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(rgba(244,92,67,0.85), rgba(231,51,73,0.85));  /*Standard syntax */
+  z-index: 100;
+}
+
+/* Overlay closing cross */
+.overlay .overlay-close {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  overflow: hidden;
+  border: none;
+  background: url(../img/cross.png) no-repeat center center;
+  text-indent: 100%;
+  color: transparent;
+  outline: none;
+  z-index: 300;
+}
+
+/* Menu style */
+.overlay nav {
+  text-align: center;
+  position: relative;
+  top: 50%;
+  height: 60%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  z-index: 200;
+}
+
+.overlay ul {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  display: inline-block;
+  height: 100%;
+  position: relative;
+}
+
+.overlay ul li {
+  display: block;
+  width: 100%;
+  height: 20%;
+  height: calc(100% / 5);
+  min-height: 54px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.overlay ul li a {
+  font-size: 36px;
+  font-weight: 300;
+  text-decoration: none !important;
+  display: block;
+  color: #fff;
+  -webkit-transition: color 0.2s;
+  transition: color 0.2s;
+}
+
+.overlay ul li a:hover,
+.overlay ul li a:focus {
+  background: #F7F7F7;
+  color: #F45C43;
+}
+
+/* Effects */
+.overlay-slidedown {
+  width: 100%;
+  visibility: hidden;
+  -webkit-transform: translateY(-100%);
+  transform: translateY(-100%);
+  -webkit-transition: -webkit-transform 0.4s ease-in-out, visibility 0s 0.4s;
+  transition: transform 0.4s ease-in-out, visibility 0s 0.4s;
+}
+
+.overlay-slidedown.open {
+  visibility: visible;
+  -webkit-transform: translateY(0%);
+  transform: translateY(0%);
+  -webkit-transition: -webkit-transform 0.4s ease-in-out;
+  transition: transform 0.4s ease-in-out;
+}
+
+.close-menu {}
+
+
+
+/* -------------------------------- 
+
+  Buttons
+
+-------------------------------- */
+
+.btn {
+  border: 1px solid #2B2B2B ;
+  border-radius: 1px;
+}
+
+.btn-default {
+  color: #2B2B2B;
+  background-color: transparent;
+  border-color: #F45C43;
+}
+.btn-default:hover,
+.btn-default:focus,
+.btn-default.focus,
+.btn-default:active,
+.btn-default.active,
+.open > .dropdown-toggle.btn-default {
+  color: #F7F7F7;
+  background-color: #F45C43;
+  border-color: #F45C43;
+}
+
+.btn-inverse {
+  color: #F7F7F7;
+  background-color: transparent;
+  border-color: #2B2B2B;
+  font-size: 20px;
+}
+.btn-inverse:hover,
+.btn-inverse:focus,
+.btn-inverse.focus,
+.btn-inverse:active,
+.btn-inverse.active,
+.open > .dropdown-toggle.btn-default {
+  color: #F7F7F7;
+  background-color: #F45C43;
+  border-color: #F45C43;
+}
+
+/* -------------------------------- 
+
+  About
+
+-------------------------------- */
+
+.top-10-percent {
+  top: 10%;
+}
+.cd-fixed-bg {
+  min-height: 70%;
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.cd-bg-1 {
+  background-image: url(../images/b1.jpg);
+}
+
+.cd-bg-2 {
+  background-image: url(../images/b2.jpg);
+}
+
+.cd-bg-3 {
+  background-image: url(../images/b3.jpg);
+}
+
+#me-photo {
+  top: 30%;
+  height: 50%;
+  width: 50%;
+}
+
+.full-section {
+  min-height: 100%;
+}
+
+.about-photo {
+  width: 120px;
+  height: 120px;
+}
