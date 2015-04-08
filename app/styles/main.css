@@ -329,6 +329,14 @@ Primary style
   background-image: url(../images/b3.jpg);
 }
 
+.cd-bg-4 {
+  background-image: url(../images/b4.jpg);
+}
+
+.cd-bg-5 {
+  background-image: url(../images/b5.jpg);
+}
+
 #me-photo {
   top: 30%;
   height: 50%;
