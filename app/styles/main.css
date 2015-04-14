@@ -12,14 +12,14 @@
 
 body {
 	background-color: #F7F7F7;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Lato', Helvetica, sans-serif;
 }
 
 html, body {
 width: 100%;
 height: 100%;
-margin: 0px;
-padding: 0px;
+margin: 0;
+padding: 0;
 }
 
 .navbar {
@@ -298,6 +298,23 @@ Primary style
   color: #F7F7F7;
   background-color: #F45C43;
   border-color: #F45C43;
+}
+
+.btn-white {
+  color: #F7F7F7;
+  background-color: transparent;
+  border-color: #F7F7F7;
+  font-size: 20px;
+}
+.btn-white:hover,
+.btn-white:focus,
+.btn-white.focus,
+.btn-white:active,
+.btn-white.active,
+.open > .dropdown-toggle.btn-white {
+  color: #2B2B2B;
+  background-color: #F7F7F7;
+  border-color: #F7F7F7;
 }
 
 /* -------------------------------- 
