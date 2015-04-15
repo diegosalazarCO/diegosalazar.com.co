@@ -33,6 +33,10 @@ angular
         templateUrl: 'views/portafolio.html',
         controller: 'PortafolioCtrl'
       })
+      .when('/contacto', {
+        templateUrl: 'views/contacto.html',
+        controller: 'ContactoCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });
