@@ -37,6 +37,10 @@ angular
         templateUrl: 'views/contacto.html',
         controller: 'ContactoCtrl'
       })
+      .when('/portafolio/tutoriapp', {
+        templateUrl: 'views/portafolio/tutoriapp.html',
+        controller: 'PortafolioTutoriappCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });
