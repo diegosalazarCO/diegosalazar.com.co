@@ -358,6 +358,8 @@ Primary style
     top: 30%;
     height: 50%;
     width: 50%;
+    max-height: 250px;
+    max-width: 250px;
 }
 
 .full-section {
@@ -365,10 +367,90 @@ Primary style
 }
 
 .about-photo {
-    width: 120px;
-    height: 120px;
+    width: 100%;
+    height: 100%;
 }
 
+/* --------------------------------
+
+  Protafolio
+
+-------------------------------- */
+
+.icon-device {
+    position: relative;
+    display: inline-block;
+    border: 3px solid #fefefe;
+    -webkit-border-radius: 3px;
+    -webkit-background-clip: padding-box;
+    -moz-border-radius: 3px;
+    -moz-background-clip: padding;
+    border-radius: 3px;
+    background-clip: padding-box;
+}
+.icon-device::before,
+.icon-device::after {
+    position: absolute;
+    content: '';
+}
+.icon-device::before {
+    top: 4px;
+    width: 15px;
+    height: 3px;
+    margin-left: -7.5px;
+    background: #fefefe;
+    -webkit-border-radius: 15px;
+    -webkit-background-clip: padding-box;
+    -moz-border-radius: 15px;
+    -moz-background-clip: padding;
+    border-radius: 15px;
+    background-clip: padding-box;
+}
+.icon-device::after {
+    bottom: 4px;
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    background: #fefefe;
+    -webkit-border-radius: 10px;
+    -webkit-background-clip: padding-box;
+    -moz-border-radius: 10px;
+    -moz-background-clip: padding;
+    border-radius: 10px;
+    background-clip: padding-box;
+}
+.icon-device.phone {
+    width: 65px;
+    height: 120px;
+}
+.icon-device.tablet {
+    width: 95px;
+    height: 120px;
+}
+.icon-device.imac {
+    width: 220px;
+    height: 150px;
+}
+.icon-device.imac::before {
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+}
+.icon-device.imac::after {
+    top: 100%;
+    border-bottom: 30px solid #fefefe;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    -webkit-border-radius: 0;
+    -webkit-background-clip: padding-box;
+    -moz-border-radius: 0;
+    -moz-background-clip: padding;
+    border-radius: 0;
+    background-clip: padding-box;
+    height: 0;
+    width: 36px;
+    margin-left: -28px;
+}
 
 /* --------------------------------
 
