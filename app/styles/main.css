@@ -127,9 +127,16 @@ Primary style
 }
 
 #logo-cool {
-    width: 220px;
-    height: 184px;
+    width: 75%;
+    height: 75%;
     vertical-align: top;
+}
+
+@media screen and (min-width: 768px) {
+    #logo-cool {
+        width: 50%;
+        height: 50%;
+    }
 }
 
 @media screen and (max-height: 320px) {
