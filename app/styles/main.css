@@ -290,6 +290,22 @@ Primary style
     border-color: #F45C43;
 }
 
+.btn-menu {
+    color: #F7F7F7;
+    background-color: #F45C43;
+    border-color: #F45C43;
+}
+.btn-menu:hover,
+.btn-menu:focus,
+.btn-menu.focus,
+.btn-menu:active,
+.btn-menu.active,
+.open > .dropdown-toggle.btn-menu {
+    color: #2B2B2B;
+    background-color: transparent;
+    border-color: #F45C43;
+}
+
 .btn-inverse {
     color: #F7F7F7;
     background-color: transparent;
@@ -301,7 +317,7 @@ Primary style
 .btn-inverse.focus,
 .btn-inverse:active,
 .btn-inverse.active,
-.open > .dropdown-toggle.btn-default {
+.open > .dropdown-toggle.btn-inverse {
     color: #F7F7F7;
     background-color: #F45C43;
     border-color: #F45C43;
