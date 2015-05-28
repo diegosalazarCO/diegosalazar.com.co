@@ -22,6 +22,16 @@ html, body {
     padding: 0;
 }
 
+a {
+    color: rgba(231,51,73,1);
+    text-decoration: none
+}
+
+a:focus, a:hover {
+    color: rgba(244,92,67,1);
+    text-decoration: underline
+}
+
 .navbar {
     margin-bottom: 0;
 }
