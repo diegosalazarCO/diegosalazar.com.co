@@ -1,0 +1,18 @@
+---
+layout: default
+---
+<!-- Posts -->
+<ul id="posts" style="list-style-type: none">
+
+    {% for post in site.posts %}
+
+      <li class="post" style="padding-top: 3em">
+        <h2><a href="{% if site.baseurl == "/" %}{{ post.url }}{% else %}{{ post.url | prepend: site.baseurl }}{% endif %}">{{ post.title }}</a></h2>
+        <time datetime="{{ post.date | date_to_xmlschema }}" class="by-line"><i>{{ post.date | date_to_string }}</i></time>
+        <p style="padding-top: 1em">{{ post.content | strip_html | truncatewords:50 }}</p>
+        <a class="btn btn-md btn-menu" href="{% if site.baseurl == "/" %}{{ post.url }}{% else %}{{ post.url | prepend: site.baseurl }}{% endif %}">Leer m&aacute;s</a>
+      </li>
+
+    {% endfor %}
+
+</ul>

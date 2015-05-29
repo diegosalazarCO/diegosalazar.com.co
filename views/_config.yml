@@ -1,0 +1,11 @@
+name: "Diego Salazar"
+description: "Desarrollador iOS y web, portafolio, blog"
+
+url: "http://localhost:4000"
+
+paginate: 10
+
+markdown: rdiscount
+permalink: /blog/:title/
+paginate_path: /page:num/
+highlighter: true
