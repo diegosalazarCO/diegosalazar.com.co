@@ -6,3 +6,4 @@ bower_components
 *.log
 *.htaccess
 .idea
+_site
