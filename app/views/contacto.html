@@ -6,7 +6,7 @@
     </div>
     <div class="row center-block" style="text-align: center; color: #F7F7F7; padding-bottom: 1em">
         <div class="col-md-12">
-            <h3>Si tienes alg&uacute;n proyeto en el que pueda colaborar, quieres asociarte y trabajar conmigo, o simplemente conocerme m&aacute;s, no dudes en contactarme.</h3>
+            <h3>Si tienes alg&uacute;n proyeto en el que pueda colaborar, quieres asociarte y trabajar conmigo, no dudes en contactarme.</h3>
         </div>
     </div>
 </div>
@@ -15,29 +15,31 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="hidden alert alert-success"><strong><span class="glyphicon glyphicon-send"></span> Listo! :) El mensaje ha sido enviado. </strong></div>
-                <div class="hidden alert alert-danger"><span class="glyphicon glyphicon-alert"></span><strong> Error! :( Verifica los datos de nuevo.</strong></div>
+                <div class="container">
+                    <div id="success" class="hidden alert alert-success"><strong><span class="glyphicon glyphicon-send"></span> Listo! :) El mensaje ha sido enviado. </strong></div>
+                    <div id="error" class="hidden alert alert-danger"><span class="glyphicon glyphicon-alert"></span><strong> Error! :( Verifica los datos de nuevo.</strong></div>
+                </div>
             </div>
-            <form role="form" action="" method="post" >
+            <form id="myForm" role="form">
                 <div class="col-lg-6">
                     <div class="hidden well well-sm"><strong><i class="glyphicon glyphicon-ok form-control-feedback"></i> Campo obligatorio</strong></div>
                     <div class="form-group">
-                        <label for="InputName">Tu nombre</label>
+                        <label for="name">Tu nombre</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" name="InputName" id="InputName" placeholder="C&oacute;mo te llamas?" required>
+                            <input type="text" class="form-control" name="name" id="name" placeholder="C&oacute;mo te llamas?" required>
                             <span class="input-group-addon"><i class="glyphicon glyphicon-ok form-control-feedback"></i></span></div>
                     </div>
                     <div class="form-group">
-                        <label for="InputEmail">Tu E-mail</label>
+                        <label for="email">Tu E-mail</label>
                         <div class="input-group">
-                            <input type="email" class="form-control" id="InputEmail" name="InputEmail" placeholder="C&oacute;mo es tu e-mail?" required  >
+                            <input type="email" class="form-control" id="email" name="email" placeholder="C&oacute;mo es tu e-mail?" required  >
                             <span class="input-group-addon"><i class="glyphicon glyphicon-ok form-control-feedback"></i></span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="InputMessage">Mensaje</label>
+                        <label for="message">Mensaje</label>
                         <div class="input-group">
-                            <textarea name="InputMessage" id="InputMessage" class="form-control" rows="5" required></textarea>
+                            <textarea name="message" id="message" class="form-control" rows="5" required></textarea>
                             <span class="input-group-addon"><i class="glyphicon glyphicon-ok form-control-feedback"></i></span>
                         </div>
                     </div>
@@ -53,10 +55,10 @@
             <hr class="featurette-divider hidden-lg">
             <div class="col-lg-5 col-md-push-1">
                 <address>
-                    <h3>Oficina</h3>
-                    <p class="lead"><a href="https://www.google.com/maps/preview?ie=UTF-8&q=The+Pentagon&fb=1&gl=us&hq=1400+Defense+Pentagon+Washington,+DC+20301-1400&cid=12647181945379443503&ei=qmYfU4H8LoL2oATa0IHIBg&ved=0CKwBEPwSMAo&safe=on">The Pentagon<br>
-                        Washington, DC 20301</a><br>
-                        Tel&eacute;fono: XXX-XXX-XXXX<br>
+                    <h3>Bogot&aacute;, Colombia</h3>
+                    <p class="lead"><a href="mailto:hola@diegosalazar.com.co"><span class="glyphicon glyphicon-envelope"></span><br>
+                        hola@diegosalazar.com.co</a><br>
+                        <span class="glyphicon glyphicon-phone"></span> WhatsApp: +57 318-772-7738<br>
                 </address>
             </div>
         </div>
@@ -65,17 +67,17 @@
 <!-- /////      Seccion  1      ///// -->
 <div class="cd-fixed-bg cd-bg-1 fade-in zero" style="min-height: 15%">
     <!-- /////      Social Icons        ///// -->
-    <div class="fade-in one" style="position:relative; padding-top: 1em; width:100%; text-align:center">
-        <a class="btn btn-inverse" href="http://">
+    <div class="fade-in one" style="position:relative; padding-top: 1em; width:100%; text-align:center; padding-bottom: 30px">
+        <a class="btn btn-inverse" href="https://plus.google.com/u/0/+DiegoSalazarCyberia" target="_blank">
             <span class="icon-google-plus"></span>
         </a>
-        <a class="btn btn-inverse" href="http://twitter.com/diegosalazarco">
+        <a class="btn btn-inverse" href="https://twitter.com/diegosalazarco" target="_blank">
             <span class="icon-twitter"></span>
         </a>
-        <a class="btn btn-inverse" href="http://github.com/diegosalazarco">
+        <a class="btn btn-inverse" href="https://github.com/diegosalazarco" target="_blank">
             <span class="icon-github4"></span>
         </a>
-        <a class="btn btn-inverse" href="http:/facebook.com/cer0un0">
+        <a class="btn btn-inverse" href="https:/facebook.com/cer0un0" target="_blank">
             <span class="icon-facebook"></span>
         </a>
     </div>
