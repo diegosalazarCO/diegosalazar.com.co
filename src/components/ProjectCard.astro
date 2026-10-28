@@ -1,0 +1,34 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'portfolio'>;
+}
+
+const { project } = Astro.props;
+const { title, summary, category, heroImage } = project.data;
+---
+
+<a class="card" href={`/portfolio-item/${project.id}/`}>
+  <Image src={heroImage} alt={title} width={640} height={480} />
+  <div class="info">
+    <h3>{title}</h3>
+    <p class="muted">{summary}</p>
+    <p class="accent category">{category}</p>
+  </div>
+</a>
+
+<style>
+  .card {
+    display: block;
+  }
+  .info {
+    padding-top: 12px;
+  }
+  .category {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+</style>
