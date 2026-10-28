@@ -1,0 +1,89 @@
+---
+interface Props {
+  title: string;
+  tagline: string;
+}
+const { title, tagline } = Astro.props;
+---
+
+<section class="hero full-bleed">
+  <video class="hero-video" id="hero-video" src="/videos/hero.mp4" autoplay loop muted playsinline></video>
+  <div class="hero-content wrap">
+    <h1>{title}</h1>
+    <p>{tagline}</p>
+  </div>
+  <button class="video-toggle" id="video-toggle" aria-label="Pause background video">
+    <span class="icon-pause">❚❚</span>
+    <span class="icon-play">▶</span>
+  </button>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.6);
+  }
+  .hero-content {
+    position: relative;
+    padding-bottom: 48px;
+  }
+  .hero-content h1 {
+    font-size: clamp(2.8rem, 8vw, 5.5rem);
+    margin: 0 0 16px;
+    line-height: 1;
+  }
+  .hero-content p {
+    max-width: 560px;
+    font-size: 1.1rem;
+  }
+  .video-toggle {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-text);
+    background: rgba(0, 0, 0, 0.5);
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+  .video-toggle .icon-play {
+    display: none;
+  }
+  .video-toggle.paused .icon-play {
+    display: block;
+  }
+  .video-toggle.paused .icon-pause {
+    display: none;
+  }
+</style>
+
+<script>
+  const video = document.getElementById('hero-video') as HTMLVideoElement | null;
+  const toggle = document.getElementById('video-toggle');
+  toggle?.addEventListener('click', () => {
+    if (!video) return;
+    if (video.paused) {
+      video.play();
+      toggle.classList.remove('paused');
+    } else {
+      video.pause();
+      toggle.classList.add('paused');
+    }
+  });
+</script>

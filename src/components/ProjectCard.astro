@@ -7,15 +7,17 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, summary, category, heroImage } = project.data;
+const { title, category, heroImage } = project.data;
+const categoryParts = category.split(' ');
 ---
 
 <a class="card" href={`/portfolio-item/${project.id}/`}>
-  <Image src={heroImage} alt={title} width={640} height={480} />
+  <div class="frame">
+    <Image src={heroImage} alt={title} width={640} height={480} />
+  </div>
   <div class="info">
     <h3>{title}</h3>
-    <p class="muted">{summary}</p>
-    <p class="accent category">{category}</p>
+    <p class="muted category">{categoryParts.join(' / ')}</p>
   </div>
 </a>
 
@@ -23,8 +25,19 @@ const { title, summary, category, heroImage } = project.data;
   .card {
     display: block;
   }
+  .frame {
+    border: 6px solid var(--color-border);
+    transition: border-color 0.2s ease;
+  }
+  .card:hover .frame {
+    border-color: var(--color-text);
+  }
   .info {
-    padding-top: 12px;
+    padding-top: 16px;
+    text-align: center;
+  }
+  .card h3 {
+    margin: 0 0 4px;
   }
   .category {
     text-transform: uppercase;

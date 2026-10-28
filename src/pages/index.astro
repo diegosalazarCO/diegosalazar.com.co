@@ -1,25 +1,19 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProjectCard from '../components/ProjectCard.astro';
+import Hero from '../components/Hero.astro';
+import PortfolioTextList from '../components/PortfolioTextList.astro';
 
 const projects = (await getCollection('portfolio')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <BaseLayout title="Home">
-  <section class="hero">
-    <h1>DIEGO ALEXANDER</h1>
-    <p class="muted">
-      Hi, I am a Tech creative and Product Developer specializing in iOS, AR, and AI products. I founded a
-      fashion brand, and have worked in the Fintech world — bringing innovation to the industry.
-    </p>
-  </section>
+  <Hero
+    title="Diego Alexander"
+    tagline="Hi, I am a Tech creative and Product Developer specializing in iOS, AR, and AI products. I founded a fashion brand, and have worked in the Fintech world — bringing innovation to the industry."
+  />
 
-  <section class="grid">
-    {projects.map((project) => (
-      <ProjectCard project={project} />
-    ))}
-  </section>
+  <PortfolioTextList projects={projects} />
 
   <section class="about">
     <h2>Tech &amp; Creativity</h2>
@@ -35,21 +29,8 @@ const projects = (await getCollection('portfolio')).sort((a, b) => a.data.order 
 </BaseLayout>
 
 <style>
-  .hero {
-    padding: 64px 0 32px;
-  }
-  .hero h1 {
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    margin: 0 0 16px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 32px;
-    padding: 32px 0;
-  }
   .about {
     max-width: 640px;
-    padding: 48px 0;
+    padding: 0 0 64px;
   }
 </style>

@@ -52,6 +52,11 @@ h4 {
   padding: 0 24px;
 }
 
+.full-bleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
 .accent {
   color: var(--color-accent);
 }
