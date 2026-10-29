@@ -1,0 +1,119 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+// The original site had a header music toggle, but it was never actually
+// configured — it pointed at the WordPress theme vendor's own demo mp3,
+// not a track of Diego's. Self-activates once a real file is dropped here,
+// no code change needed.
+const TRACK = '/audio/theme-song.mp3';
+const exists = fs.existsSync(path.join(process.cwd(), 'public', TRACK));
+---
+
+{exists && (
+  <button class="music-toggle glass" id="music-toggle" aria-pressed="false" aria-label="Play background music">
+    <audio id="music-audio" src={TRACK} loop preload="none"></audio>
+    <span class="eq" aria-hidden="true">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </span>
+    <svg class="icon-play" width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  </button>
+)}
+
+<style>
+  .music-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 80px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text);
+    cursor: pointer;
+    z-index: 40;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out), border-color 0.2s ease;
+  }
+  .music-toggle.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .music-toggle:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+  .icon-play {
+    display: block;
+  }
+  .eq {
+    display: none;
+    align-items: flex-end;
+    gap: 2px;
+    height: 13px;
+  }
+  .music-toggle.playing .icon-play {
+    display: none;
+  }
+  .music-toggle.playing .eq {
+    display: flex;
+  }
+  .eq .bar {
+    width: 2.5px;
+    height: 30%;
+    background: currentColor;
+    animation: eq 0.9s ease-in-out infinite;
+  }
+  .eq .bar:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .eq .bar:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  @keyframes eq {
+    0%,
+    100% {
+      height: 25%;
+    }
+    50% {
+      height: 100%;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .eq .bar {
+      animation: none;
+      height: 70%;
+    }
+  }
+</style>
+
+<script>
+  const button = document.getElementById('music-toggle');
+  const audio = document.getElementById('music-audio') as HTMLAudioElement | null;
+
+  window.addEventListener('scroll', () => {
+    button?.classList.toggle('visible', window.scrollY > 600);
+  });
+
+  button?.addEventListener('click', () => {
+    if (!audio) return;
+    if (audio.paused) {
+      audio.play();
+      button.classList.add('playing');
+      button.setAttribute('aria-pressed', 'true');
+    } else {
+      audio.pause();
+      button.classList.remove('playing');
+      button.setAttribute('aria-pressed', 'false');
+    }
+  });
+</script>
