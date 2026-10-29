@@ -7,7 +7,7 @@ const { title, tagline } = Astro.props;
 ---
 
 <section class="hero full-bleed">
-  <video class="hero-video" id="hero-video" src="/videos/hero.mp4" autoplay loop muted playsinline></video>
+  <video class="hero-video" id="hero-video" src="/videos/hero.mp4" autoplay loop muted playsinline preload="auto"></video>
   <div class="hero-content wrap">
     <h1>{title}</h1>
     <p>{tagline}</p>
@@ -88,6 +88,21 @@ const { title, tagline } = Astro.props;
 <script>
   const video = document.getElementById('hero-video') as HTMLVideoElement | null;
   const toggle = document.getElementById('video-toggle');
+
+  // Safari (especially Private Browsing) can silently reject a muted autoplay
+  // attempt. Retry on the first user gesture, which it always honors.
+  function attemptPlay() {
+    if (!video) return;
+    video.muted = true;
+    video.play().catch(() => {
+      const retry = () => video.play().catch(() => {});
+      ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach((type) =>
+        document.addEventListener(type, retry, { once: true, passive: true })
+      );
+    });
+  }
+  attemptPlay();
+
   toggle?.addEventListener('click', () => {
     if (!video) return;
     if (video.paused) {

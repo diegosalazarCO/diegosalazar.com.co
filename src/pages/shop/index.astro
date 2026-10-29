@@ -1,6 +1,12 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { mailto } from '../../lib/constants';
+
+const printModules = import.meta.glob<{ default: ImageMetadata }>('../../assets/shop/*.jpg', { eager: true });
+const printOrder = [1, 2, 7, 8, 11, 15];
+const prints = printOrder.map((n) => printModules[`../../assets/shop/print-${n}.jpg`].default);
 ---
 
 <BaseLayout title="Shop">
@@ -9,11 +15,40 @@ import { mailto } from '../../lib/constants';
     <p>Feel free to DM me if you are interested in any of the prints from my photography work.</p>
     <a class="accent" href={mailto('Interested in a Dalexarte print')}>Contact me →</a>
   </section>
+
+  <section class="prints">
+    {prints.map((print, i) => (
+      <Image class="lightbox-img" src={print} alt={`Dalexarte print ${i + 1}`} width={Math.min(print.width, 700)} />
+    ))}
+  </section>
 </BaseLayout>
 
 <style>
   .shop {
-    padding: 64px 0;
+    padding: 64px 0 32px;
     max-width: 480px;
+  }
+  .prints {
+    columns: 1;
+    column-gap: 24px;
+    padding-bottom: 64px;
+  }
+  .prints :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 24px;
+    break-inside: avoid;
+  }
+  @media (min-width: 560px) {
+    .prints {
+      columns: 2;
+      column-gap: 32px;
+    }
+  }
+  @media (min-width: 900px) {
+    .prints {
+      columns: 3;
+    }
   }
 </style>

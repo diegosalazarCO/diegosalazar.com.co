@@ -5,7 +5,6 @@ import { getSortedProjects } from '../../lib/content';
 
 const projects = await getSortedProjects();
 const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCase().split(' ')))].sort();
-const aspects = ['tall', 'square', 'wide'] as const;
 ---
 
 <BaseLayout title="Portfolio">
@@ -20,8 +19,8 @@ const aspects = ['tall', 'square', 'wide'] as const;
   </div>
 
   <section class="grid" id="grid">
-    {projects.map((project, i) => (
-      <ProjectCard project={project} aspect={aspects[i % aspects.length]} />
+    {projects.map((project) => (
+      <ProjectCard project={project} />
     ))}
   </section>
 </BaseLayout>

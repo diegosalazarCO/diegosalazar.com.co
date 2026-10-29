@@ -40,7 +40,15 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
       {heroImage ? (
         <Image src={heroImage} alt="" width={Math.min(heroImage.width, 600)} />
       ) : (
-        <span class="tile-title">{title}</span>
+        <>
+          <span class="glass-badge notes-badge glass">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <path d="M9 7H6a3 3 0 0 0 0 6h3M15 7h3a3 3 0 0 1 0 6h-3M8 10h8" />
+            </svg>
+            Notes
+          </span>
+          <span class="tile-title">{title}</span>
+        </>
       )}
       {hasMedia && <span class="badge">▶</span>}
     </a>
@@ -142,6 +150,17 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
     transition: border-color 0.25s ease;
   }
   .post:hover .text-only {
+    border-color: var(--color-accent);
+  }
+  .notes-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    color: var(--color-text);
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  .post:hover .notes-badge {
+    background: var(--glass-bg-strong);
     border-color: var(--color-accent);
   }
   .tile-title {

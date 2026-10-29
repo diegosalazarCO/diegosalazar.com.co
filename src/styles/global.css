@@ -9,6 +9,11 @@
   --font-body: 'Roboto Condensed', Helvetica, Arial, sans-serif;
   --max-width: 1100px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --glass-bg: rgba(255, 255, 255, 0.07);
+  --glass-bg-strong: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-blur: blur(20px) saturate(160%);
+  --radius-glass: 18px;
 }
 
 * {
@@ -114,6 +119,62 @@ h4 {
 }
 .split-text:hover .line {
   transform: translateY(-100%);
+}
+
+/* Prose spacing for rendered markdown inside a `.content` wrapper
+   (blog posts, project descriptions) */
+.content h2,
+.content h3 {
+  margin: 40px 0 16px;
+}
+.content h2:first-child,
+.content h3:first-child {
+  margin-top: 0;
+}
+.content p {
+  margin: 0 0 16px;
+}
+.content blockquote {
+  margin: 24px 0;
+  padding: 4px 0 4px 20px;
+  border-left: 2px solid var(--color-accent);
+  color: var(--color-muted);
+  font-style: italic;
+}
+.content blockquote p {
+  margin: 0;
+}
+.content a:not(.lightbox-img) {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Liquid-glass surface: frosted, translucent, soft-edged (2026 UI language —
+   used as an accent against the site's otherwise sharp, brutalist type).
+   Falls back to a plain dark panel where backdrop-filter isn't supported. */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .glass {
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+  }
+}
+
+/* Small glass badge, e.g. a link/thread indicator on a blog tile */
+.glass-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 /* Inverted button: filled light, hollows out on hover (homepage CTAs) */

@@ -10,7 +10,7 @@ linkLabel: "Website"
 heroImage: "../../assets/portfolio/cyberialab.png"
 heroVideo: "/videos/cyberialab.mp4"
 layout: video
-order: 2
+order: 3
 ---
 
 Pioneering innovation for a digital revolution with AI solutions. Consulting company to create AI products and help other companies take the next level.

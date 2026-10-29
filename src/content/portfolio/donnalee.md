@@ -13,7 +13,7 @@ gallery:
   - image: "../../assets/portfolio/gallery/donnalee-3.jpg"
   - image: "../../assets/portfolio/gallery/donnalee-4.jpg"
 layout: gallery
-order: 4
+order: 5
 ---
 
 Founder of a Colombian fashion brand inspired by converting art into underwear, thanks to the work of a great team that, inspired by women, is dedicated to making garments with a touch of delicacy and elegance.
