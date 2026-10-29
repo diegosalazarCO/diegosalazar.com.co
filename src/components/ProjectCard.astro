@@ -9,9 +9,10 @@ interface Props {
 const { project } = Astro.props;
 const { title, category, heroImage } = project.data;
 const categoryParts = category.split(' ');
+const categorySlugs = categoryParts.map((c) => c.toLowerCase()).join(' ');
 ---
 
-<a class="card" href={`/portfolio-item/${project.id}/`}>
+<a class="card" href={`/portfolio-item/${project.id}/`} data-categories={categorySlugs}>
   <div class="frame">
     <Image src={heroImage} alt={title} width={640} height={480} />
   </div>
@@ -24,13 +25,24 @@ const categoryParts = category.split(' ');
 <style>
   .card {
     display: block;
+    transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+  }
+  .card.is-hidden {
+    display: none;
   }
   .frame {
+    overflow: hidden;
     border: 6px solid var(--color-border);
-    transition: border-color 0.2s ease;
+    transition: border-color 0.25s ease;
+  }
+  .frame img {
+    transition: transform 0.5s var(--ease-out);
   }
   .card:hover .frame {
     border-color: var(--color-text);
+  }
+  .card:hover .frame img {
+    transform: scale(1.08);
   }
   .info {
     padding-top: 16px;

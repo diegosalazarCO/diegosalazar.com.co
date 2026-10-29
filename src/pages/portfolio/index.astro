@@ -4,11 +4,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 
 const projects = (await getCollection('portfolio')).sort((a, b) => a.data.order - b.data.order);
+const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCase().split(' ')))].sort();
 ---
 
 <BaseLayout title="Portfolio">
   <h1>Portfolio</h1>
-  <section class="grid">
+
+  <div class="filter" id="filter">
+    <button class="filter-btn active" data-filter="all">All</button>
+    {categories.map((cat) => (
+      <button class="filter-btn" data-filter={cat}>{cat}</button>
+    ))}
+  </div>
+
+  <section class="grid" id="grid">
     {projects.map((project) => (
       <ProjectCard project={project} />
     ))}
@@ -16,6 +25,33 @@ const projects = (await getCollection('portfolio')).sort((a, b) => a.data.order 
 </BaseLayout>
 
 <style>
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 24px 0 8px;
+  }
+  .filter-btn {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.85rem;
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-muted);
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .filter-btn:hover {
+    color: var(--color-text);
+    border-color: var(--color-text);
+  }
+  .filter-btn.active {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -23,3 +59,22 @@ const projects = (await getCollection('portfolio')).sort((a, b) => a.data.order 
     padding: 32px 0 64px;
   }
 </style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const cards = document.querySelectorAll<HTMLAnchorElement>('#grid .card');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+
+      cards.forEach((card) => {
+        const categories = card.dataset.categories ?? '';
+        const show = filter === 'all' || categories.split(' ').includes(filter ?? '');
+        card.classList.toggle('is-hidden', !show);
+      });
+    });
+  });
+</script>

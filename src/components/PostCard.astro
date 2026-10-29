@@ -1,26 +1,109 @@
 ---
+import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   post: CollectionEntry<'blog'>;
+  aspect?: 'tall' | 'square' | 'wide';
 }
 
-const { post } = Astro.props;
-const { title, date, categories } = post.data;
+const { post, aspect = 'square' } = Astro.props;
+const { title, date, categories, heroImage, embedUrl, audioUrl, videoUrl } = post.data;
+const hasMedia = Boolean(embedUrl || audioUrl || videoUrl);
 ---
 
 <a class="post" href={`/blog/${post.id}/`}>
-  <h3>{title}</h3>
-  <p class="muted">
-    {date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-    {categories.length > 0 && <span> · {categories.join(', ')}</span>}
-  </p>
+  {heroImage ? (
+    <div class={`media ${aspect}`}>
+      <Image src={heroImage} alt={title} width={600} height={600} />
+      {hasMedia && <span class="badge">▶</span>}
+    </div>
+  ) : (
+    <div class={`media text-only ${aspect}`}>
+      <span class="tile-title">{title}</span>
+      {hasMedia && <span class="badge">▶</span>}
+    </div>
+  )}
+  <div class="info">
+    <h3>{title}</h3>
+    <p class="muted">
+      {date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+      {categories.length > 0 && <span> · {categories.join(', ')}</span>}
+    </p>
+  </div>
 </a>
 
 <style>
   .post {
     display: block;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--color-border);
+    break-inside: avoid;
+    margin-bottom: 32px;
+  }
+  .media {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-border);
+  }
+  .media.tall {
+    aspect-ratio: 3 / 4;
+  }
+  .media.square {
+    aspect-ratio: 1;
+  }
+  .media.wide {
+    aspect-ratio: 4 / 3;
+  }
+  .media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease-out);
+  }
+  .post:hover .media :global(img) {
+    transform: scale(1.08);
+  }
+  .text-only {
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    background: linear-gradient(155deg, #1c1c1c, var(--color-bg));
+    border: 1px solid var(--color-border);
+    transition: border-color 0.25s ease;
+  }
+  .post:hover .text-only {
+    border-color: var(--color-accent);
+  }
+  .tile-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--color-text);
+    font-size: 0.7rem;
+  }
+  .info {
+    padding-top: 14px;
+  }
+  .post h3 {
+    margin: 0 0 4px;
+    font-size: 1.1rem;
+  }
+  .info p {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 </style>

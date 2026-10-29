@@ -4,20 +4,32 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 
 const posts = (await getCollection('blog')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const aspects = ['tall', 'square', 'wide'] as const;
 ---
 
 <BaseLayout title="Blog">
   <h1>Blog</h1>
-  <section class="list">
-    {posts.map((post) => (
-      <PostCard post={post} />
+  <section class="masonry">
+    {posts.map((post, i) => (
+      <PostCard post={post} aspect={aspects[i % aspects.length]} />
     ))}
   </section>
 </BaseLayout>
 
 <style>
-  .list {
-    max-width: 680px;
+  .masonry {
     padding: 32px 0 64px;
+    columns: 1;
+    column-gap: 28px;
+  }
+  @media (min-width: 640px) {
+    .masonry {
+      columns: 2;
+    }
+  }
+  @media (min-width: 1000px) {
+    .masonry {
+      columns: 3;
+    }
   }
 </style>

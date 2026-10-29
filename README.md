@@ -17,7 +17,25 @@ public/         passthrough static files (CNAME, robots.txt, videos)
 
 Content lives as markdown with typed frontmatter (see `src/content.config.ts`). Add a new
 portfolio piece or blog post by dropping a `.md` file into `src/content/portfolio/` or
-`src/content/blog/` — no code changes needed.
+`src/content/blog/` — no code changes needed. Delete the file to remove it.
+
+### Portfolio items
+
+Every file in `src/content/portfolio/` renders through the same template
+([src/pages/portfolio-item/\[slug\]/index.astro](src/pages/portfolio-item/%5Bslug%5D/index.astro)) —
+add a project by copying an existing `.md` file as a starting point. Frontmatter fields that
+control organization:
+
+- `order` — controls position in the homepage list and `/portfolio/` grid (lower = earlier)
+- `category` — space-separated words (e.g. `"AI Fashion Product"`); each word becomes its own
+  filter button on `/portfolio/`
+- `heroVideo` — optional, shows a looping video instead of the hero image on the detail page
+
+### Blog posts
+
+Files in `src/content/blog/` render on `/blog/` as a masonry grid — posts with a `heroImage`
+show as image tiles, posts without one show as text tiles, and tile height cycles through
+tall/square/wide for visual rhythm.
 
 ## Commands
 

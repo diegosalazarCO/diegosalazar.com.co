@@ -21,9 +21,9 @@ const { title, tagline } = Astro.props;
 <style>
   .hero {
     position: relative;
-    min-height: 80vh;
+    min-height: 92vh;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     overflow: hidden;
   }
   .hero-video {
@@ -32,20 +32,19 @@ const { title, tagline } = Astro.props;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(0.6);
+    filter: brightness(0.55);
   }
   .hero-content {
     position: relative;
-    padding-bottom: 48px;
   }
   .hero-content h1 {
-    font-size: clamp(2.8rem, 8vw, 5.5rem);
-    margin: 0 0 16px;
-    line-height: 1;
+    font-size: clamp(3.5rem, 11vw, 8rem);
+    margin: 0 0 28px;
   }
   .hero-content p {
     max-width: 560px;
-    font-size: 1.1rem;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 300;
   }
   .video-toggle {
     position: absolute;
@@ -61,6 +60,12 @@ const { title, tagline } = Astro.props;
     align-items: center;
     justify-content: center;
     font-size: 0.8rem;
+    transition: transform 0.25s var(--ease-out), border-color 0.25s ease;
+  }
+  .video-toggle:hover {
+    transform: scale(1.1);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
   .video-toggle .icon-play {
     display: none;

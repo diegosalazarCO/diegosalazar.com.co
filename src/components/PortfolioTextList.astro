@@ -15,7 +15,7 @@ const previews = await Promise.all(
 );
 ---
 
-<section class="text-list">
+<section class="text-list" id="text-list">
   <ul>
     {projects.map((project, i) => (
       <li>
@@ -36,34 +36,50 @@ const previews = await Promise.all(
 <style>
   .text-list {
     position: relative;
-    padding: 48px 0 80px;
+    padding: 56px 0 96px;
   }
   ul {
     list-style: none;
     margin: 0;
     padding: 0 24px;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 48px;
+    row-gap: 4px;
+  }
+  li {
+    width: auto;
   }
   .list-link {
-    display: block;
-    font-size: clamp(1.6rem, 5vw, 3rem);
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 5.5vw, 3.4rem);
     font-weight: 700;
     text-transform: uppercase;
-    padding: 6px 0;
-    transition: color 0.2s ease;
+    letter-spacing: -0.02em;
+    padding: 4px 0;
+    transition: color 0.25s var(--ease-out), transform 0.25s var(--ease-out);
   }
   .list-link:hover,
   .list-link:focus-visible {
     color: var(--color-accent);
+    transform: translateX(12px);
   }
   .preview {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    width: min(320px, 40vw);
+    top: 0;
+    left: 0;
+    width: min(300px, 36vw);
     aspect-ratio: 1;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(0.9);
     pointer-events: none;
     z-index: 40;
+    opacity: 0;
+    transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+  }
+  .preview.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
   .preview img {
     position: absolute;
@@ -80,16 +96,27 @@ const previews = await Promise.all(
 </style>
 
 <script>
-  const links = document.querySelectorAll<HTMLAnchorElement>('.list-link');
+  const container = document.getElementById('text-list');
+  const preview = document.getElementById('preview');
   const images = document.querySelectorAll<HTMLImageElement>('.preview img');
+  let activeIndex: string | null = null;
 
-  links.forEach((link) => {
-    link.addEventListener('mouseenter', () => {
-      const index = link.dataset.preview;
-      images.forEach((img) => img.classList.toggle('active', img.dataset.index === index));
-    });
-    link.addEventListener('mouseleave', () => {
-      images.forEach((img) => img.classList.remove('active'));
-    });
+  container?.addEventListener('mousemove', (e) => {
+    if (!preview) return;
+    preview.style.left = `${e.clientX}px`;
+    preview.style.top = `${e.clientY}px`;
+
+    const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('.list-link');
+    const index = link?.dataset.preview ?? null;
+    if (index !== activeIndex) {
+      activeIndex = index;
+      images.forEach((img) => img.classList.toggle('active', img.dataset.index === activeIndex));
+    }
+    preview.classList.toggle('visible', index !== null);
+  });
+
+  container?.addEventListener('mouseleave', () => {
+    activeIndex = null;
+    preview?.classList.remove('visible');
   });
 </script>
