@@ -35,6 +35,7 @@ const blog = defineCollection({
       audioUrl: z.string().url().optional(),
       videoUrl: z.string().url().optional(),
       layout: z.enum(['standard', 'micro', 'embed']).default('standard'),
+      source: z.enum(['twitter']).optional(),
     }),
 });
 

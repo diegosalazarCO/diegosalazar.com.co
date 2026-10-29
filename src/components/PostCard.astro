@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { formatDate } from '../lib/format';
+import { excerpt, isSoundcloud, youtubeThumbnail } from '../lib/embed';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -9,30 +10,49 @@ interface Props {
 }
 
 const { post, aspect = 'square' } = Astro.props;
-const { title, date, categories, heroImage, embedUrl, audioUrl, videoUrl } = post.data;
+const { title, date, categories, heroImage, embedUrl, audioUrl, videoUrl, source } = post.data;
+const href = `/blog/${post.id}/`;
 const hasMedia = Boolean(embedUrl || audioUrl || videoUrl);
+const videoThumb = youtubeThumbnail(embedUrl);
+const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' : videoThumb ? 'video' : 'default';
 ---
 
-<a class="post" href={`/blog/${post.id}/`} data-categories={`|${categories.join('|')}|`}>
-  {heroImage ? (
-    <div class={`media ${aspect}`}>
-      <Image src={heroImage} alt={title} width={Math.min(heroImage.width, 600)} />
-      {hasMedia && <span class="badge">▶</span>}
-    </div>
-  ) : (
-    <div class={`media text-only ${aspect}`}>
-      <span class="tile-title">{title}</span>
-      {hasMedia && <span class="badge">▶</span>}
+<article class="post" data-categories={`|${categories.join('|')}|`}>
+  {kind === 'audio' && (
+    <div class="media audio">
+      <iframe src={embedUrl} title={title} frameborder="0" loading="lazy"></iframe>
     </div>
   )}
+  {kind === 'tweet' && (
+    <a class="media tweet" href={href} tabindex="-1" aria-hidden="true">
+      <span class="tweet-source">From Twitter</span>
+      <p class="tweet-text">{excerpt(post.body)}</p>
+    </a>
+  )}
+  {kind === 'video' && (
+    <a class="media video" href={href} tabindex="-1" aria-hidden="true">
+      <img src={videoThumb} alt="" loading="lazy" />
+      <span class="badge">▶</span>
+    </a>
+  )}
+  {kind === 'default' && (
+    <a class={`media ${heroImage ? aspect : `text-only ${aspect}`}`} href={href} tabindex="-1" aria-hidden="true">
+      {heroImage ? (
+        <Image src={heroImage} alt="" width={Math.min(heroImage.width, 600)} />
+      ) : (
+        <span class="tile-title">{title}</span>
+      )}
+      {hasMedia && <span class="badge">▶</span>}
+    </a>
+  )}
   <div class="info">
-    <h3>{title}</h3>
+    <h3><a href={href}>{title}</a></h3>
     <p class="muted">
       {formatDate(date)}
       {categories.length > 0 && <span> · {categories.join(', ')}</span>}
     </p>
   </div>
-</a>
+</article>
 
 <style>
   .post {
@@ -44,6 +64,7 @@ const hasMedia = Boolean(embedUrl || audioUrl || videoUrl);
     display: none;
   }
   .media {
+    display: block;
     position: relative;
     overflow: hidden;
     background: var(--color-border);
@@ -65,6 +86,52 @@ const hasMedia = Boolean(embedUrl || audioUrl || videoUrl);
   }
   .post:hover .media :global(img) {
     transform: scale(1.08);
+  }
+  .media.video {
+    aspect-ratio: 16 / 9;
+  }
+  .media.video img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* crops the letterbox bars baked into YouTube's hqdefault */
+  }
+  .media.audio {
+    height: 300px;
+  }
+  .media.audio iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .media.tweet {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 220px;
+    padding: 20px;
+    background: linear-gradient(155deg, #1c1c1c, var(--color-bg));
+    border: 1px solid var(--color-border);
+    transition: border-color 0.25s ease;
+  }
+  .post:hover .media.tweet {
+    border-color: var(--color-accent);
+  }
+  .tweet-source {
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+  .tweet-text {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .text-only {
     display: flex;
