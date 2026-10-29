@@ -67,9 +67,9 @@ const aspects = ['tall', 'square', 'wide'] as const;
 
   function applyFilters() {
     cards.forEach((card) => {
-      const cardCategories = (card.dataset.categories ?? '').split(' ');
+      const cardCategories = card.dataset.categories ?? '';
       const cardYear = card.dataset.year ?? '';
-      const matchesCategory = activeCategory === 'all' || cardCategories.includes(activeCategory);
+      const matchesCategory = activeCategory === 'all' || cardCategories.includes(`|${activeCategory}|`);
       const matchesYear = activeYear === 'all' || cardYear === activeYear;
       card.classList.toggle('is-hidden', !(matchesCategory && matchesYear));
     });
