@@ -34,6 +34,12 @@ const { title, tagline } = Astro.props;
     object-fit: cover;
     filter: brightness(0.55);
   }
+  /* On phones the crop is narrow: anchor it to the left edge of the video */
+  @media (max-width: 640px) {
+    .hero-video {
+      object-position: left center;
+    }
+  }
   .hero-content {
     position: relative;
   }
