@@ -6,7 +6,7 @@ category: "Finance iOS"
 tags: ["Finance", "iOS"]
 date: 2018-08-14
 heroImage: "../../assets/portfolio/fintech-app.jpeg"
-order: 6
+order: 7
 ---
 
 Worked on Mis Finanzas and Alcancía for the Personas app at Bci Bank, developing new features. Started a new PYME app for Bci Bank.

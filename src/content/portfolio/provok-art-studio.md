@@ -11,7 +11,7 @@ gallery:
   - video: "/videos/provok-art-studio-lau.mp4"
   - image: "../../assets/portfolio/gallery/provok-art-studio-2.jpeg"
 layout: video
-order: 3
+order: 4
 ---
 
 Digital brand concept based on digital fashion, wearables and NFT collections. This brand was born from Donna Lee as a digital experimentation with 3D clothes, masks and accessories, using tools like Clo3D, Spark AR, and ARKit for mobile.

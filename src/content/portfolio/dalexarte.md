@@ -12,7 +12,7 @@ gallery:
   - image: "../../assets/portfolio/gallery/dalexarte-2.jpg"
   - image: "../../assets/portfolio/gallery/dalexarte-3.jpeg"
 layout: gallery
-order: 5
+order: 6
 ---
 
 D. Alexander (@dalexarte) is a personal photography and visual brand. All of this work has been inspired by fashion, beauty, travel and underwater concepts.
