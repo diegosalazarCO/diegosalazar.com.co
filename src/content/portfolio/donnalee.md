@@ -5,8 +5,8 @@ role: "Founder, Photographer, Concept, Web"
 category: "Brand Fashion Product"
 tags: ["Design", "Fashion", "Founder"]
 date: 2020-08-01
-link: "https://donnaleeoficial.com/"
-linkLabel: "Shop website"
+link: "https://www.instagram.com/donnaleeoficial/"
+linkLabel: "Instagram"
 heroImage: "../../assets/portfolio/donnalee.jpg"
 thumbnail: "../../assets/portfolio/donnalee-thumb.jpg"
 gallery:

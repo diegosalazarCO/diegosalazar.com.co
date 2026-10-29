@@ -5,8 +5,8 @@ client: "Cyberia Lab"
 category: "AI Fashion Product"
 tags: ["AI", "Fashion", "Product"]
 date: 2023-04-30
-link: "https://provok.ai/"
-linkLabel: "Magazine website"
+link: "https://www.instagram.com/provok.ai/"
+linkLabel: "Instagram"
 heroImage: "../../assets/portfolio/provok-ai.jpg"
 order: 2
 ---
