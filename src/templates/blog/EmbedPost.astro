@@ -24,7 +24,7 @@ const { Content } = await render(post);
     <PostMeta date={date} categories={categories} />
     {audioUrl && <audio class="audio" src={audioUrl} controls />}
 
-    <div class="content">
+    <div class="content" data-reveal>
       <Content />
     </div>
 

@@ -1,0 +1,73 @@
+---
+import { Image } from 'astro:assets';
+import provok from '../assets/clients/provokicon.png';
+import tbs from '../assets/clients/tbsicon.png';
+import tnt from '../assets/clients/tnticon.png';
+import bci from '../assets/clients/bciicon.png';
+import donnalee from '../assets/clients/donnaleeicon.png';
+import globant from '../assets/clients/globanticon.png';
+import nisum from '../assets/clients/nisumlogo.png';
+import royalCaribbean from '../assets/clients/royalcaribbeanicon.png';
+
+const logos = [
+  { src: provok, alt: 'Provok' },
+  { src: tbs, alt: 'TBS' },
+  { src: tnt, alt: 'TNT' },
+  { src: bci, alt: 'Bci Bank' },
+  { src: donnalee, alt: 'Donna Lee' },
+  { src: globant, alt: 'Globant' },
+  { src: nisum, alt: 'Nisum' },
+  { src: royalCaribbean, alt: 'Royal Caribbean' },
+];
+---
+
+<div class="marquee">
+  <div class="track">
+    {[...logos, ...logos].map((logo) => (
+      <Image src={logo.src} alt={logo.alt} width={100} height={50} loading="eager" />
+    ))}
+  </div>
+</div>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+  .track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    gap: 56px;
+    animation: scroll 28s linear infinite;
+  }
+  .marquee:hover .track {
+    animation-play-state: paused;
+  }
+  .track :global(img) {
+    height: 28px;
+    width: auto;
+    opacity: 0.6;
+    filter: grayscale(1) brightness(2);
+    transition: opacity 0.25s ease;
+  }
+  .track :global(img:hover) {
+    opacity: 1;
+  }
+  @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+</style>

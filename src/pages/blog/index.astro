@@ -4,12 +4,33 @@ import PostCard from '../../components/PostCard.astro';
 import { getSortedPosts } from '../../lib/content';
 
 const posts = await getSortedPosts();
+const categories = [...new Set(posts.flatMap((p) => p.data.categories))].sort();
+const years = [...new Set(posts.map((p) => p.data.date.getFullYear()))].sort((a, b) => b - a);
 const aspects = ['tall', 'square', 'wide'] as const;
 ---
 
 <BaseLayout title="Blog">
   <h1>Blog</h1>
-  <section class="masonry">
+
+  <p class="filter-label muted">Category</p>
+  <div class="filter" id="filter-category">
+    <span class="filter-indicator" id="indicator-category"></span>
+    <button class="filter-btn active" data-filter="all">All</button>
+    {categories.map((cat) => (
+      <button class="filter-btn" data-filter={cat}>{cat}</button>
+    ))}
+  </div>
+
+  <p class="filter-label muted">Year</p>
+  <div class="filter" id="filter-year">
+    <span class="filter-indicator" id="indicator-year"></span>
+    <button class="filter-btn active" data-filter="all">All</button>
+    {years.map((year) => (
+      <button class="filter-btn" data-filter={String(year)}>{year}</button>
+    ))}
+  </div>
+
+  <section class="masonry" id="grid">
     {posts.map((post, i) => (
       <PostCard post={post} aspect={aspects[i % aspects.length]} />
     ))}
@@ -17,8 +38,11 @@ const aspects = ['tall', 'square', 'wide'] as const;
 </BaseLayout>
 
 <style>
+  h1 {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
   .masonry {
-    padding: 32px 0 64px;
+    padding: 28px 0 56px;
     columns: 1;
     column-gap: 28px;
   }
@@ -33,3 +57,58 @@ const aspects = ['tall', 'square', 'wide'] as const;
     }
   }
 </style>
+
+<script>
+  import { moveIndicator, withViewTransition } from '../../lib/filterBar';
+
+  const cards = document.querySelectorAll<HTMLAnchorElement>('#grid .post');
+  let activeCategory = 'all';
+  let activeYear = 'all';
+
+  function applyFilters() {
+    cards.forEach((card) => {
+      const cardCategories = (card.dataset.categories ?? '').split(' ');
+      const cardYear = card.dataset.year ?? '';
+      const matchesCategory = activeCategory === 'all' || cardCategories.includes(activeCategory);
+      const matchesYear = activeYear === 'all' || cardYear === activeYear;
+      card.classList.toggle('is-hidden', !(matchesCategory && matchesYear));
+    });
+  }
+
+  function wireFilterGroup(containerId: string, indicatorId: string, onSelect: (value: string) => void) {
+    const container = document.getElementById(containerId);
+    const indicator = document.getElementById(indicatorId);
+    const buttons = container?.querySelectorAll<HTMLButtonElement>('.filter-btn') ?? [];
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('active')) return;
+        buttons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (indicator) moveIndicator(indicator, btn);
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+        onSelect(btn.dataset.filter ?? 'all');
+        withViewTransition(applyFilters);
+      });
+    });
+
+    const active = container?.querySelector<HTMLButtonElement>('.filter-btn.active');
+    if (active && indicator) moveIndicator(indicator, active);
+    return { buttons, indicator };
+  }
+
+  const category = wireFilterGroup('filter-category', 'indicator-category', (value) => {
+    activeCategory = value;
+  });
+  const year = wireFilterGroup('filter-year', 'indicator-year', (value) => {
+    activeYear = value;
+  });
+
+  window.addEventListener('resize', () => {
+    const activeCat = document.querySelector<HTMLButtonElement>('#filter-category .filter-btn.active');
+    const activeYr = document.querySelector<HTMLButtonElement>('#filter-year .filter-btn.active');
+    if (activeCat && category.indicator) moveIndicator(category.indicator, activeCat);
+    if (activeYr && year.indicator) moveIndicator(year.indicator, activeYr);
+  });
+</script>

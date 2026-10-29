@@ -30,69 +30,12 @@ const aspects = ['tall', 'square', 'wide'] as const;
   h1 {
     font-size: clamp(2rem, 6vw, 3rem);
   }
-  .filter {
-    position: relative;
-    display: flex;
-    gap: 10px;
-    padding: 20px 0 8px;
-    margin: 0 -24px;
-    padding-inline: 24px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .filter::-webkit-scrollbar {
-    display: none;
-  }
-  .filter-indicator {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 34px;
-    width: 0;
-    background: var(--color-accent);
-    pointer-events: none;
-    transition: transform 0.35s var(--ease-out), width 0.35s var(--ease-out);
-  }
-  .filter-btn {
-    position: relative;
-    flex: 0 0 auto;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    font-size: 0.8rem;
-    background: none;
-    border: 1px solid var(--color-border);
-    color: var(--color-muted);
-    padding: 8px 14px;
-    cursor: pointer;
-    transition: border-color 0.2s ease, color 0.2s ease;
-  }
-  .filter-btn:hover {
-    color: var(--color-text);
-    border-color: var(--color-text);
-  }
-  .filter-btn.active {
-    color: #111;
-    border-color: var(--color-accent);
-  }
   .grid {
     columns: 1;
     column-gap: 24px;
     padding: 28px 0 56px;
   }
   @media (min-width: 560px) {
-    .filter {
-      flex-wrap: wrap;
-      overflow: visible;
-      margin: 0;
-      padding-inline: 0;
-      gap: 12px;
-    }
-    .filter-btn {
-      font-size: 0.85rem;
-      padding: 8px 18px;
-    }
     .grid {
       columns: 2;
       column-gap: 32px;
@@ -106,15 +49,14 @@ const aspects = ['tall', 'square', 'wide'] as const;
 </style>
 
 <script>
+  import { moveIndicator, withViewTransition } from '../../lib/filterBar';
+
   const indicator = document.getElementById('filter-indicator');
   const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
   const cards = document.querySelectorAll<HTMLAnchorElement>('#grid .card');
 
   function moveIndicatorTo(btn: HTMLButtonElement) {
-    if (!indicator) return;
-    indicator.style.width = `${btn.offsetWidth}px`;
-    indicator.style.height = `${btn.offsetHeight}px`;
-    indicator.style.transform = `translate(${btn.offsetLeft}px, ${btn.offsetTop}px)`;
+    if (indicator) moveIndicator(indicator, btn);
   }
 
   function applyFilter(filter: string | undefined) {
@@ -133,11 +75,7 @@ const aspects = ['tall', 'square', 'wide'] as const;
       moveIndicatorTo(btn);
       btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
-      if (document.startViewTransition) {
-        document.startViewTransition(() => applyFilter(btn.dataset.filter));
-      } else {
-        applyFilter(btn.dataset.filter);
-      }
+      withViewTransition(() => applyFilter(btn.dataset.filter));
     });
   });
 

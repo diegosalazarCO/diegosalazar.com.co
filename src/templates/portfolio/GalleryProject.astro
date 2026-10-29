@@ -19,7 +19,7 @@ const { Content } = await render(project);
   <h1>{title}</h1>
   <Image class="lightbox-img hero-image" src={heroImage} alt={title} width={Math.min(heroImage.width, 1300)} />
 
-  <div class="content">
+  <div class="content" data-reveal>
     <Content />
   </div>
 

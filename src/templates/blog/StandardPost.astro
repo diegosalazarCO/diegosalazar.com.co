@@ -27,7 +27,7 @@ const { Content } = await render(post);
   {videoUrl && <video src={videoUrl} controls />}
   {audioUrl && <audio src={audioUrl} controls />}
 
-  <div class="content">
+  <div class="content" data-reveal>
     <Content />
   </div>
 

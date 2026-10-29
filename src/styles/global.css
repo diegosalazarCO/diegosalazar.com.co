@@ -117,3 +117,90 @@ h4 {
   height: auto;
   margin: 0 auto;
 }
+
+/* Fade/rise-in on scroll (desktop only — see ScrollReveal.astro) */
+@media (min-width: 768px) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+  [data-reveal].in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Sliding-indicator filter bar (portfolio categories, blog categories/years) */
+.filter {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  margin: 0 -24px;
+  padding-inline: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filter::-webkit-scrollbar {
+  display: none;
+}
+.filter-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 16px 0 0;
+}
+.filter-indicator {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  height: 34px;
+  width: 0;
+  background: var(--color-accent);
+  pointer-events: none;
+  transition: transform 0.35s var(--ease-out), width 0.35s var(--ease-out);
+}
+.filter-btn {
+  position: relative;
+  flex: 0 0 auto;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.8rem;
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-muted);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.filter-btn:hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
+}
+.filter-btn.active {
+  color: #111;
+  border-color: var(--color-accent);
+}
+@media (min-width: 560px) {
+  .filter {
+    flex-wrap: wrap;
+    overflow: visible;
+    margin: 0;
+    padding-inline: 0;
+    gap: 12px;
+  }
+  .filter-btn {
+    font-size: 0.85rem;
+    padding: 8px 18px;
+  }
+}
