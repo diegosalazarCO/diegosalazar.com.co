@@ -5,7 +5,7 @@ role: "Product"
 category: "AI Technology"
 tags: ["AI"]
 date: 2023-04-27
-link: "https://cyberialab.co/"
+link: "https://cyberialab.github.io/landing-page/"
 linkLabel: "Website"
 heroImage: "../../assets/portfolio/cyberialab.png"
 heroVideo: "/videos/cyberialab.mp4"
