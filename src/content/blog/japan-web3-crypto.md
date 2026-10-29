@@ -3,6 +3,7 @@ title: "Japan Embraces Web3 As Global Regulators Grow Wary of Crypto"
 date: 2022-08-06
 categories: ["crypto"]
 tags: ["cryptocurrency", "web3"]
+layout: micro
 ---
 
 With tight regulations already in place that helped insulate FTX Japan and its investors from heavy losses, Japan is working on policy and guidelines for stablecoins, NFTs and DAOs as it welcomes a crypto future.

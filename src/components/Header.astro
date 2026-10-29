@@ -1,4 +1,6 @@
 ---
+import { mailto } from '../lib/constants';
+
 const navItems = [
   { href: '/', label: 'Home' },
   { href: '/portfolio/', label: 'Portfolio' },
@@ -15,9 +17,7 @@ const current = Astro.url.pathname;
       <span></span>
     </button>
     <a href="/" class="brand">DIEGO</a>
-    <a class="contact" href="mailto:hola@diegosalazar.com.co?subject=Hi! This is a contact from your website">
-      Contact
-    </a>
+    <a class="contact" href={mailto()}>Contact</a>
   </div>
 
   <nav class="menu-panel" id="menu-panel">

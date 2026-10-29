@@ -9,6 +9,7 @@ link: "https://cyberialab.co/"
 linkLabel: "Website"
 heroImage: "../../assets/portfolio/cyberialab.png"
 heroVideo: "/videos/cyberialab.mp4"
+layout: video
 order: 2
 ---
 

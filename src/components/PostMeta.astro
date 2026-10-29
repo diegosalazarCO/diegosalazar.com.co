@@ -1,0 +1,14 @@
+---
+import { formatDate } from '../lib/format';
+
+interface Props {
+  date: Date;
+  categories: string[];
+}
+const { date, categories } = Astro.props;
+---
+
+<p class="muted post-meta">
+  {formatDate(date)}
+  {categories.length > 0 && <span> · {categories.join(', ')}</span>}
+</p>

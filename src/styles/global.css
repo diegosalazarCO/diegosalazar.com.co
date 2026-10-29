@@ -99,3 +99,21 @@ h4 {
   animation-duration: 0.4s;
   animation-timing-function: var(--ease-out);
 }
+
+/* Any image opened by Lightbox.astro (click-to-zoom content/hero images) */
+.lightbox-img,
+.content img {
+  cursor: zoom-in;
+  transition: opacity 0.2s ease;
+}
+.lightbox-img:hover,
+.content img:hover {
+  opacity: 0.85;
+}
+
+/* A hero image shown at its natural aspect ratio, never cropped or upscaled */
+.hero-image {
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}

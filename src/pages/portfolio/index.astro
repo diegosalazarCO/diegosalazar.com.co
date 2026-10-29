@@ -1,9 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
+import { getSortedProjects } from '../../lib/content';
 
-const projects = (await getCollection('portfolio')).sort((a, b) => a.data.order - b.data.order);
+const projects = await getSortedProjects();
 const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCase().split(' ')))].sort();
 const aspects = ['tall', 'square', 'wide'] as const;
 ---

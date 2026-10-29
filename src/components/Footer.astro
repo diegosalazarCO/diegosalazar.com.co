@@ -1,8 +1,10 @@
+---
+import { mailto } from '../lib/constants';
+---
+
 <footer class="site-footer">
   <div class="wrap">
-    <a class="accent link-underline" href="mailto:hola@diegosalazar.com.co?subject=Hi! This is a contact from your website">
-      Contact me
-    </a>
+    <a class="accent link-underline" href={mailto()}>Contact me</a>
     <p class="muted">&copy; {new Date().getFullYear()} Diego Alexander Salazar.</p>
   </div>
 </footer>

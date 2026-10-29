@@ -4,6 +4,7 @@ date: 2021-12-03
 categories: ["film", "video"]
 tags: ["photography", "sharks", "underwater"]
 embedUrl: "https://www.youtube.com/embed/Oul7rwz1KMA"
+layout: embed
 ---
 
 Primera inmersión con tiburones.

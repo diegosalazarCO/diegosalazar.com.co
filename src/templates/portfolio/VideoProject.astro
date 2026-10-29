@@ -1,0 +1,54 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import ProjectMeta from '../../components/ProjectMeta.astro';
+import ProjectNav from '../../components/ProjectNav.astro';
+
+interface Props {
+  project: CollectionEntry<'portfolio'>;
+  prev: CollectionEntry<'portfolio'>;
+  next: CollectionEntry<'portfolio'>;
+}
+const { project, prev, next } = Astro.props;
+const { title, client, role, category, tags, date, link, linkLabel, heroVideo } = project.data;
+const { Content } = await render(project);
+---
+
+<article class="item">
+  <video class="full-bleed hero-video" src={heroVideo} autoplay muted loop playsinline controls />
+
+  <div class="wrap">
+    <h1>{title}</h1>
+    <div class="content">
+      <Content />
+    </div>
+
+    {link && (
+      <p>
+        <a class="accent" href={link} target="_blank" rel="noopener">
+          {linkLabel ?? 'Visit website'} →
+        </a>
+      </p>
+    )}
+
+    <ProjectMeta client={client} role={role} category={category} date={date} tags={tags} />
+    <ProjectNav prev={prev} next={next} />
+  </div>
+</article>
+
+<style>
+  .item {
+    padding-bottom: 48px;
+  }
+  .hero-video {
+    max-height: 80vh;
+    object-fit: cover;
+  }
+  h1 {
+    margin-top: 40px;
+  }
+  .content {
+    max-width: 680px;
+    margin: 32px 0;
+  }
+</style>

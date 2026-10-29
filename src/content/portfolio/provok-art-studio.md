@@ -7,6 +7,7 @@ tags: ["3D", "Clo3D", "Lens Studio", "SnapAR"]
 date: 2022-07-27
 heroImage: "../../assets/portfolio/provok-art-studio.jpeg"
 heroVideo: "/videos/provok-art-studio.mp4"
+layout: video
 order: 3
 ---
 

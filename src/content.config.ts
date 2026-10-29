@@ -16,6 +16,8 @@ const portfolio = defineCollection({
       linkLabel: z.string().optional(),
       heroImage: image(),
       heroVideo: z.string().optional(),
+      gallery: z.array(image()).default([]),
+      layout: z.enum(['standard', 'video', 'gallery']).default('standard'),
       order: z.number().default(0),
     }),
 });
@@ -32,6 +34,7 @@ const blog = defineCollection({
       embedUrl: z.string().url().optional(),
       audioUrl: z.string().url().optional(),
       videoUrl: z.string().url().optional(),
+      layout: z.enum(['standard', 'micro', 'embed']).default('standard'),
     }),
 });
 

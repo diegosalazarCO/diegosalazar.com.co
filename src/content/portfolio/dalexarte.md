@@ -8,6 +8,10 @@ date: 2018-10-01
 link: "https://instagram.com/dalexarte/"
 linkLabel: "Dalexarte"
 heroImage: "../../assets/portfolio/dalexarte.jpg"
+gallery:
+  - "../../assets/portfolio/gallery/dalexarte-2.jpg"
+  - "../../assets/portfolio/gallery/dalexarte-3.jpeg"
+layout: gallery
 order: 5
 ---
 

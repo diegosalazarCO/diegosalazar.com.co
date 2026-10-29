@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/format';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -27,7 +28,7 @@ const hasMedia = Boolean(embedUrl || audioUrl || videoUrl);
   <div class="info">
     <h3>{title}</h3>
     <p class="muted">
-      {date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+      {formatDate(date)}
       {categories.length > 0 && <span> · {categories.join(', ')}</span>}
     </p>
   </div>

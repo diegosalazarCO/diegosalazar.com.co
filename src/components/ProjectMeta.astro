@@ -1,0 +1,52 @@
+---
+import { formatDate } from '../lib/format';
+
+interface Props {
+  client?: string;
+  role?: string;
+  category: string;
+  date: Date;
+  tags: string[];
+}
+const { client, role, category, date, tags } = Astro.props;
+---
+
+<dl class="meta">
+  {client && (
+    <>
+      <dt>Client</dt>
+      <dd>{client}</dd>
+    </>
+  )}
+  {role && (
+    <>
+      <dt>Role</dt>
+      <dd>{role}</dd>
+    </>
+  )}
+  <dt>Category</dt>
+  <dd>{category}</dd>
+  <dt>Date</dt>
+  <dd>{formatDate(date)}</dd>
+  {tags.length > 0 && (
+    <>
+      <dt>Tags</dt>
+      <dd>{tags.join(', ')}</dd>
+    </>
+  )}
+</dl>
+
+<style>
+  .meta {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 8px 16px;
+    margin: 32px 0;
+    max-width: 480px;
+  }
+  .meta dt {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+</style>

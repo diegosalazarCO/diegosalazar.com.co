@@ -1,10 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import PortfolioTextList from '../components/PortfolioTextList.astro';
+import { getSortedProjects } from '../lib/content';
 
-const projects = (await getCollection('portfolio')).sort((a, b) => a.data.order - b.data.order);
+const projects = await getSortedProjects();
 ---
 
 <BaseLayout title="Home">
