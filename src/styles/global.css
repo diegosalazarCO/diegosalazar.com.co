@@ -242,7 +242,7 @@ h4 {
   }
 }
 
-/* Sliding-indicator filter bar (portfolio categories, blog categories/years) */
+/* Sliding-indicator filter bar (portfolio categories, blog categories) */
 .filter {
   position: relative;
   display: flex;

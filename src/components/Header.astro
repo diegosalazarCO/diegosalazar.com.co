@@ -1,6 +1,4 @@
 ---
-import { mailto } from '../lib/constants';
-
 const navItems = [
   { href: '/', label: 'Home' },
   { href: '/portfolio/', label: 'Portfolio' },
@@ -17,7 +15,6 @@ const current = Astro.url.pathname;
       <span></span>
     </button>
     <a href="/" class="brand">DIEGO</a>
-    <a class="contact" href={mailto()}>Contact</a>
   </div>
 
   <nav class="menu-panel" id="menu-panel">
@@ -48,14 +45,6 @@ const current = Astro.url.pathname;
     font-family: var(--font-display);
     font-size: 1.8rem;
     letter-spacing: -0.04em;
-  }
-  .contact {
-    justify-self: end;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
   }
   .menu-toggle {
     justify-self: start;

@@ -13,7 +13,7 @@ const { title, date, categories, heroImage, embedUrl, audioUrl, videoUrl } = pos
 const hasMedia = Boolean(embedUrl || audioUrl || videoUrl);
 ---
 
-<a class="post" href={`/blog/${post.id}/`} data-categories={`|${categories.join('|')}|`} data-year={date.getFullYear()}>
+<a class="post" href={`/blog/${post.id}/`} data-categories={`|${categories.join('|')}|`}>
   {heroImage ? (
     <div class={`media ${aspect}`}>
       <Image src={heroImage} alt={title} width={Math.min(heroImage.width, 600)} />
