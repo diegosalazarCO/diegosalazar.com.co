@@ -14,7 +14,7 @@ const categorySlugs = categoryParts.map((c) => c.toLowerCase()).join(' ');
 
 <a class="card" href={`/portfolio-item/${project.id}/`} data-categories={categorySlugs}>
   <div class="frame">
-    <Image src={heroImage} alt={title} width={640} height={480} />
+    <Image src={heroImage} alt={title} width={Math.min(heroImage.width, 640)} />
   </div>
   <div class="info">
     <h3>{title}</h3>
@@ -31,11 +31,16 @@ const categorySlugs = categoryParts.map((c) => c.toLowerCase()).join(' ');
     display: none;
   }
   .frame {
+    aspect-ratio: 4 / 3;
     overflow: hidden;
+    background: #000;
     border: 6px solid var(--color-border);
     transition: border-color 0.25s ease;
   }
   .frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     transition: transform 0.5s var(--ease-out);
   }
   .card:hover .frame {

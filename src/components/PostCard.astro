@@ -15,7 +15,7 @@ const hasMedia = Boolean(embedUrl || audioUrl || videoUrl);
 <a class="post" href={`/blog/${post.id}/`}>
   {heroImage ? (
     <div class={`media ${aspect}`}>
-      <Image src={heroImage} alt={title} width={600} height={600} />
+      <Image src={heroImage} alt={title} width={Math.min(heroImage.width, 600)} />
       {hasMedia && <span class="badge">▶</span>}
     </div>
   ) : (
@@ -56,7 +56,7 @@ const hasMedia = Boolean(embedUrl || audioUrl || videoUrl);
   .media :global(img) {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transition: transform 0.5s var(--ease-out);
   }
   .post:hover .media :global(img) {
