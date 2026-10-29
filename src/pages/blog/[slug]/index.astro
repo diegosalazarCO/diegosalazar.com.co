@@ -24,7 +24,9 @@ const { Content } = await render(post);
       {categories.length > 0 && <span> · {categories.join(', ')}</span>}
     </p>
 
-    {heroImage && <Image class="lightbox-img" src={heroImage} alt={title} width={1300} height={731} />}
+    {heroImage && (
+      <Image class="lightbox-img hero-image" src={heroImage} alt={title} width={Math.min(heroImage.width, 1300)} />
+    )}
     {embedUrl && (
       <div class="embed">
         <iframe src={embedUrl} title={title} frameborder="0" allowfullscreen loading="lazy"></iframe>
@@ -54,6 +56,11 @@ const { Content } = await render(post);
   }
   .post :global(.lightbox-img:hover) {
     opacity: 0.85;
+  }
+  .post :global(.hero-image) {
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
   }
   .content {
     margin: 32px 0;

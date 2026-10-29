@@ -26,7 +26,7 @@ const { Content } = await render(project);
     {heroVideo ? (
       <video src={heroVideo} poster={heroImage.src} controls autoplay muted loop playsinline />
     ) : (
-      <Image class="lightbox-img" src={heroImage} alt={title} width={1300} height={731} />
+      <Image class="lightbox-img hero-image" src={heroImage} alt={title} width={Math.min(heroImage.width, 1300)} />
     )}
 
     <div class="content">
@@ -87,6 +87,11 @@ const { Content } = await render(project);
   .item :global(.lightbox-img) {
     cursor: zoom-in;
     transition: opacity 0.2s ease;
+  }
+  .item :global(.hero-image) {
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
   }
   .item :global(.lightbox-img:hover) {
     opacity: 0.85;
