@@ -5,7 +5,6 @@ import { getSortedPosts } from '../../lib/content';
 
 const posts = await getSortedPosts();
 const categories = [...new Set(posts.flatMap((p) => p.data.categories))].sort();
-const years = [...new Set(posts.map((p) => p.data.date.getFullYear()))].sort((a, b) => b - a);
 const aspects = ['tall', 'square', 'wide'] as const;
 ---
 
@@ -18,15 +17,6 @@ const aspects = ['tall', 'square', 'wide'] as const;
     <button class="filter-btn active" data-filter="all">All</button>
     {categories.map((cat) => (
       <button class="filter-btn" data-filter={cat}>{cat}</button>
-    ))}
-  </div>
-
-  <p class="filter-label muted">Year</p>
-  <div class="filter" id="filter-year">
-    <span class="filter-indicator" id="indicator-year"></span>
-    <button class="filter-btn active" data-filter="all">All</button>
-    {years.map((year) => (
-      <button class="filter-btn" data-filter={String(year)}>{year}</button>
     ))}
   </div>
 
@@ -63,15 +53,12 @@ const aspects = ['tall', 'square', 'wide'] as const;
 
   const cards = document.querySelectorAll<HTMLAnchorElement>('#grid .post');
   let activeCategory = 'all';
-  let activeYear = 'all';
 
   function applyFilters() {
     cards.forEach((card) => {
       const cardCategories = card.dataset.categories ?? '';
-      const cardYear = card.dataset.year ?? '';
       const matchesCategory = activeCategory === 'all' || cardCategories.includes(`|${activeCategory}|`);
-      const matchesYear = activeYear === 'all' || cardYear === activeYear;
-      card.classList.toggle('is-hidden', !(matchesCategory && matchesYear));
+      card.classList.toggle('is-hidden', !matchesCategory);
     });
   }
 
@@ -101,14 +88,9 @@ const aspects = ['tall', 'square', 'wide'] as const;
   const category = wireFilterGroup('filter-category', 'indicator-category', (value) => {
     activeCategory = value;
   });
-  const year = wireFilterGroup('filter-year', 'indicator-year', (value) => {
-    activeYear = value;
-  });
 
   window.addEventListener('resize', () => {
     const activeCat = document.querySelector<HTMLButtonElement>('#filter-category .filter-btn.active');
-    const activeYr = document.querySelector<HTMLButtonElement>('#filter-year .filter-btn.active');
     if (activeCat && category.indicator) moveIndicator(category.indicator, activeCat);
-    if (activeYr && year.indicator) moveIndicator(year.indicator, activeYr);
   });
 </script>
