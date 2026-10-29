@@ -1,0 +1,34 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import ProjectLayout from '../../components/ProjectLayout.astro';
+import ProjectMedia from '../../components/ProjectMedia.astro';
+import ProjectMeta from '../../components/ProjectMeta.astro';
+import ProjectNav from '../../components/ProjectNav.astro';
+
+interface Props {
+  project: CollectionEntry<'portfolio'>;
+  prev: CollectionEntry<'portfolio'>;
+  next: CollectionEntry<'portfolio'>;
+}
+const { project, prev, next } = Astro.props;
+const { title, client, role, category, tags, date, link, linkLabel, heroImage, heroVideo, gallery } = project.data;
+const { Content } = await render(project);
+---
+
+<ProjectLayout title={title}>
+  <ProjectMedia slot="media" title={title} heroImage={heroImage} heroVideo={heroVideo} gallery={gallery} />
+
+  <Content />
+
+  {link && (
+    <p>
+      <a class="accent" href={link} target="_blank" rel="noopener">
+        {linkLabel ?? 'Visit website'} →
+      </a>
+    </p>
+  )}
+</ProjectLayout>
+
+<ProjectMeta client={client} role={role} category={category} date={date} tags={tags} />
+<ProjectNav prev={prev} next={next} />

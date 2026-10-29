@@ -93,6 +93,49 @@ h4 {
   transform-origin: left;
 }
 
+/* Roll-up text swap on hover: current line slides out up, an accent-colored
+   duplicate slides in from below (footer nav). */
+.split-text {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 1.2em;
+  line-height: 1.2;
+}
+.split-text .line {
+  display: block;
+  transition: transform 0.35s var(--ease-out);
+}
+.split-text .line-in {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: var(--color-accent);
+}
+.split-text:hover .line {
+  transform: translateY(-100%);
+}
+
+/* Inverted button: filled light, hollows out on hover (homepage CTAs) */
+.btn {
+  display: inline-block;
+  background: var(--color-text);
+  color: var(--color-bg);
+  border: 1px solid var(--color-text);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+  padding: 14px 32px;
+  cursor: pointer;
+  transition: background 0.25s var(--ease-out), color 0.25s var(--ease-out);
+}
+.btn:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
 /* Tunes the native View Transitions crossfade (e.g. portfolio filtering) to the site's easing */
 ::view-transition-old(root),
 ::view-transition-new(root) {

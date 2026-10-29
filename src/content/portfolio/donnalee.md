@@ -9,9 +9,9 @@ link: "https://donnaleeoficial.com/"
 linkLabel: "Shop website"
 heroImage: "../../assets/portfolio/donnalee.jpg"
 gallery:
-  - "../../assets/portfolio/gallery/donnalee-2.jpg"
-  - "../../assets/portfolio/gallery/donnalee-3.jpg"
-  - "../../assets/portfolio/gallery/donnalee-4.jpg"
+  - image: "../../assets/portfolio/gallery/donnalee-2.jpg"
+  - image: "../../assets/portfolio/gallery/donnalee-3.jpg"
+  - image: "../../assets/portfolio/gallery/donnalee-4.jpg"
 layout: gallery
 order: 4
 ---

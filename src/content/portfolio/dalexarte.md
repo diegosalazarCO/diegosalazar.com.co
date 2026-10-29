@@ -9,8 +9,8 @@ link: "https://instagram.com/dalexarte/"
 linkLabel: "Dalexarte"
 heroImage: "../../assets/portfolio/dalexarte.jpg"
 gallery:
-  - "../../assets/portfolio/gallery/dalexarte-2.jpg"
-  - "../../assets/portfolio/gallery/dalexarte-3.jpeg"
+  - image: "../../assets/portfolio/gallery/dalexarte-2.jpg"
+  - image: "../../assets/portfolio/gallery/dalexarte-3.jpeg"
 layout: gallery
 order: 5
 ---

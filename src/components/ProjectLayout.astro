@@ -1,0 +1,47 @@
+---
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<article class="project-layout">
+  <h1>{title}</h1>
+
+  <div class="split">
+    <div class="media-col">
+      <slot name="media" />
+    </div>
+    <div class="desc-col" data-reveal>
+      <slot />
+    </div>
+  </div>
+</article>
+
+<style>
+  .project-layout {
+    padding: 40px 0 48px;
+  }
+  h1 {
+    margin: 0 0 32px;
+  }
+  .split {
+    display: grid;
+    gap: 40px;
+  }
+  .desc-col {
+    max-width: 680px;
+  }
+  @media (min-width: 900px) {
+    .split {
+      grid-template-columns: 1.3fr 1fr;
+      align-items: start;
+      gap: 56px;
+    }
+    .desc-col {
+      position: sticky;
+      top: 96px;
+      max-width: none;
+    }
+  }
+</style>

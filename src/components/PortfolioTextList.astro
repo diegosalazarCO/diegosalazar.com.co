@@ -73,7 +73,7 @@ const previews = await Promise.all(
     width: min(300px, 36vw);
     aspect-ratio: 1;
     background: #000;
-    transform: translate(-50%, -50%) scale(0.9);
+    transform: translate(-50%, -100%) scale(0.9);
     pointer-events: none;
     z-index: 40;
     opacity: 0;
@@ -81,7 +81,7 @@ const previews = await Promise.all(
   }
   .preview.visible {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -100%) scale(1);
   }
   .preview img {
     position: absolute;
@@ -103,10 +103,13 @@ const previews = await Promise.all(
   const images = document.querySelectorAll<HTMLImageElement>('.preview img');
   let activeIndex: string | null = null;
 
+  const GAP = 28;
+
   container?.addEventListener('mousemove', (e) => {
     if (!preview) return;
+    const minTop = preview.offsetHeight + 12;
     preview.style.left = `${e.clientX}px`;
-    preview.style.top = `${e.clientY}px`;
+    preview.style.top = `${Math.max(minTop, e.clientY - GAP)}px`;
 
     const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('.list-link');
     const index = link?.dataset.preview ?? null;

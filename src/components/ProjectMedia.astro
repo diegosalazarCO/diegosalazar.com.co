@@ -1,0 +1,43 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface GalleryItem {
+  image?: ImageMetadata;
+  video?: string;
+}
+interface Props {
+  title: string;
+  heroImage: ImageMetadata;
+  heroVideo?: string;
+  gallery?: GalleryItem[];
+}
+const { title, heroImage, heroVideo, gallery = [] } = Astro.props;
+---
+
+<div class="project-media">
+  {heroVideo ? (
+    <video class="hero-image" src={heroVideo} poster={heroImage.src} autoplay muted loop playsinline controls />
+  ) : (
+    <Image class="lightbox-img hero-image" src={heroImage} alt={title} width={Math.min(heroImage.width, 800)} />
+  )}
+
+  {gallery.map((item) =>
+    item.video ? (
+      <video class="hero-image" src={item.video} autoplay muted loop playsinline controls />
+    ) : item.image ? (
+      <Image class="lightbox-img hero-image" src={item.image} alt={title} width={Math.min(item.image.width, 800)} />
+    ) : null
+  )}
+</div>
+
+<style>
+  .project-media {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .project-media :global(.hero-image) {
+    margin: 0;
+  }
+</style>

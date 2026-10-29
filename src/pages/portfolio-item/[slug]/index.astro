@@ -1,15 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import StandardProject from '../../../templates/portfolio/StandardProject.astro';
-import VideoProject from '../../../templates/portfolio/VideoProject.astro';
-import GalleryProject from '../../../templates/portfolio/GalleryProject.astro';
+import ProjectTemplate from '../../../templates/portfolio/ProjectTemplate.astro';
 import { getSortedProjects, getPrevNext } from '../../../lib/content';
-
-const templates = {
-  standard: StandardProject,
-  video: VideoProject,
-  gallery: GalleryProject,
-};
 
 export async function getStaticPaths() {
   const projects = await getSortedProjects();
@@ -20,9 +12,8 @@ export async function getStaticPaths() {
 }
 
 const { project, prev, next } = Astro.props;
-const Template = templates[project.data.layout];
 ---
 
 <BaseLayout title={project.data.title} description={project.data.summary}>
-  <Template project={project} prev={prev} next={next} />
+  <ProjectTemplate project={project} prev={prev} next={next} />
 </BaseLayout>

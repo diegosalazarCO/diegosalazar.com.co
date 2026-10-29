@@ -1,6 +1,13 @@
 ---
 import { mailto } from '../lib/constants';
 import ClientsMarquee from './ClientsMarquee.astro';
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/blog/', label: 'Blog' },
+  { href: '/shop/', label: 'Shop' },
+  { href: mailto(), label: 'Contact Me' },
+];
 ---
 
 <footer class="site-footer">
@@ -10,8 +17,15 @@ import ClientsMarquee from './ClientsMarquee.astro';
   </div>
 
   <div class="wrap bottom">
-    <a class="accent link-underline" href={mailto()}>Contact me</a>
-    <p class="muted">&copy; {new Date().getFullYear()} Diego Alexander Salazar.</p>
+    <p class="brand">Diego Alexander Salazar</p>
+    <nav class="links">
+      {links.map((link) => (
+        <a href={link.href} class="split-text">
+          <span class="line">{link.label}</span>
+          <span class="line line-in" aria-hidden="true">{link.label}</span>
+        </a>
+      ))}
+    </nav>
   </div>
 </footer>
 
@@ -30,15 +44,27 @@ import ClientsMarquee from './ClientsMarquee.astro';
     margin: 0 0 20px;
   }
   .bottom {
+    text-align: center;
+    border-top: 1px solid var(--color-border);
+    padding: 40px 0 100px;
+  }
+  .brand {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: var(--color-muted);
+    opacity: 0.5;
+    margin: 0 0 24px;
+  }
+  .links {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    border-top: 1px solid var(--color-border);
-    padding: 24px 0 48px;
+    justify-content: center;
+    gap: 16px 32px;
   }
-  .bottom a {
+  .links a {
     font-family: var(--font-heading);
     font-weight: 700;
     text-transform: uppercase;

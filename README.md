@@ -28,10 +28,11 @@ its frontmatter. The route file (`src/pages/portfolio-item/[slug]/index.astro` o
 `src/pages/blog/[slug]/index.astro`) just maps that value to a component in `src/templates/` —
 adding a new look is: build the template, add one line to that map, opt content into it.
 
-**Portfolio** (`src/templates/portfolio/`):
-- `standard` (default) — hero image, content, metadata
-- `video` — full-bleed cinematic video hero (for projects with `heroVideo`)
-- `gallery` — hero + a clickable image grid below the content (needs a `gallery: [...]` array)
+**Portfolio** (`src/templates/portfolio/ProjectTemplate.astro`): a sticky editorial split —
+media (hero image/video + any `gallery` items, image or video, stacked) on one side, content
+on the other, which stays in view as you scroll past the media; stacks mobile-first below
+900px. The `layout` field (`standard` / `video` / `gallery`) still tags each project and is
+free to point at a dedicated template again later if one project ever needs to diverge.
 
 **Blog** (`src/templates/blog/`):
 - `standard` (default) — full article: hero/embed, prose content
@@ -39,8 +40,9 @@ adding a new look is: build the template, add one line to that map, opt content 
   look like an empty page
 - `embed` — media-first: a large YouTube/SoundCloud embed up top, text below
 
-Shared pieces used across templates live in `src/components/` (`ProjectMeta`, `ProjectNav`,
-`PostMeta`) so each template file stays focused on layout, not repeated markup.
+Shared pieces used across templates live in `src/components/` (`ProjectLayout`, `ProjectMedia`,
+`ProjectMeta`, `ProjectNav`, `PostMeta`) so each template file stays focused on layout, not
+repeated markup.
 
 Other frontmatter worth knowing:
 - `order` (portfolio) — position in the homepage list and `/portfolio/` grid (lower = earlier)
