@@ -4,16 +4,17 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   project: CollectionEntry<'portfolio'>;
+  aspect?: 'tall' | 'square' | 'wide';
 }
 
-const { project } = Astro.props;
+const { project, aspect = 'square' } = Astro.props;
 const { title, category, heroImage } = project.data;
 const categoryParts = category.split(' ');
 const categorySlugs = categoryParts.map((c) => c.toLowerCase()).join(' ');
 ---
 
 <a class="card" href={`/portfolio-item/${project.id}/`} data-categories={categorySlugs}>
-  <div class="frame">
+  <div class={`frame ${aspect}`}>
     <Image src={heroImage} alt={title} width={Math.min(heroImage.width, 640)} />
   </div>
   <div class="info">
@@ -25,17 +26,26 @@ const categorySlugs = categoryParts.map((c) => c.toLowerCase()).join(' ');
 <style>
   .card {
     display: block;
-    transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+    break-inside: avoid;
+    margin-bottom: 40px;
   }
   .card.is-hidden {
     display: none;
   }
   .frame {
-    aspect-ratio: 4 / 3;
     overflow: hidden;
     background: #000;
     border: 6px solid var(--color-border);
     transition: border-color 0.25s ease;
+  }
+  .frame.tall {
+    aspect-ratio: 3 / 4;
+  }
+  .frame.square {
+    aspect-ratio: 1;
+  }
+  .frame.wide {
+    aspect-ratio: 4 / 3;
   }
   .frame img {
     width: 100%;

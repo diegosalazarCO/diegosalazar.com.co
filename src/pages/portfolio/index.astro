@@ -5,12 +5,14 @@ import ProjectCard from '../../components/ProjectCard.astro';
 
 const projects = (await getCollection('portfolio')).sort((a, b) => a.data.order - b.data.order);
 const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCase().split(' ')))].sort();
+const aspects = ['tall', 'square', 'wide'] as const;
 ---
 
 <BaseLayout title="Portfolio">
   <h1>Portfolio</h1>
 
   <div class="filter" id="filter">
+    <span class="filter-indicator" id="filter-indicator"></span>
     <button class="filter-btn active" data-filter="all">All</button>
     {categories.map((cat) => (
       <button class="filter-btn" data-filter={cat}>{cat}</button>
@@ -18,8 +20,8 @@ const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCa
   </div>
 
   <section class="grid" id="grid">
-    {projects.map((project) => (
-      <ProjectCard project={project} />
+    {projects.map((project, i) => (
+      <ProjectCard project={project} aspect={aspects[i % aspects.length]} />
     ))}
   </section>
 </BaseLayout>
@@ -29,6 +31,7 @@ const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCa
     font-size: clamp(2rem, 6vw, 3rem);
   }
   .filter {
+    position: relative;
     display: flex;
     gap: 10px;
     padding: 20px 0 8px;
@@ -40,7 +43,18 @@ const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCa
   .filter::-webkit-scrollbar {
     display: none;
   }
+  .filter-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 34px;
+    width: 0;
+    background: var(--color-accent);
+    pointer-events: none;
+    transition: transform 0.35s var(--ease-out), width 0.35s var(--ease-out);
+  }
   .filter-btn {
+    position: relative;
     flex: 0 0 auto;
     font-family: var(--font-heading);
     font-weight: 700;
@@ -59,13 +73,12 @@ const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCa
     border-color: var(--color-text);
   }
   .filter-btn.active {
-    color: var(--color-accent);
+    color: #111;
     border-color: var(--color-accent);
   }
   .grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 40px 24px;
+    columns: 1;
+    column-gap: 24px;
     padding: 28px 0 56px;
   }
   @media (min-width: 560px) {
@@ -81,32 +94,57 @@ const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCa
       padding: 8px 18px;
     }
     .grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 32px;
+      columns: 2;
+      column-gap: 32px;
     }
   }
   @media (min-width: 900px) {
     .grid {
-      grid-template-columns: repeat(3, 1fr);
+      columns: 3;
     }
   }
 </style>
 
 <script>
+  const indicator = document.getElementById('filter-indicator');
   const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
   const cards = document.querySelectorAll<HTMLAnchorElement>('#grid .card');
 
+  function moveIndicatorTo(btn: HTMLButtonElement) {
+    if (!indicator) return;
+    indicator.style.width = `${btn.offsetWidth}px`;
+    indicator.style.height = `${btn.offsetHeight}px`;
+    indicator.style.transform = `translate(${btn.offsetLeft}px, ${btn.offsetTop}px)`;
+  }
+
+  function applyFilter(filter: string | undefined) {
+    cards.forEach((card) => {
+      const cardCategories = card.dataset.categories ?? '';
+      const show = filter === 'all' || cardCategories.split(' ').includes(filter ?? '');
+      card.classList.toggle('is-hidden', !show);
+    });
+  }
+
   buttons.forEach((btn) => {
     btn.addEventListener('click', () => {
+      if (btn.classList.contains('active')) return;
       buttons.forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
-      const filter = btn.dataset.filter;
+      moveIndicatorTo(btn);
+      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
-      cards.forEach((card) => {
-        const categories = card.dataset.categories ?? '';
-        const show = filter === 'all' || categories.split(' ').includes(filter ?? '');
-        card.classList.toggle('is-hidden', !show);
-      });
+      if (document.startViewTransition) {
+        document.startViewTransition(() => applyFilter(btn.dataset.filter));
+      } else {
+        applyFilter(btn.dataset.filter);
+      }
     });
+  });
+
+  const activeButton = document.querySelector<HTMLButtonElement>('.filter-btn.active');
+  if (activeButton) moveIndicatorTo(activeButton);
+  window.addEventListener('resize', () => {
+    const current = document.querySelector<HTMLButtonElement>('.filter-btn.active');
+    if (current) moveIndicatorTo(current);
   });
 </script>
