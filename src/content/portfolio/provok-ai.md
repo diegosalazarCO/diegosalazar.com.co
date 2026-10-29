@@ -8,7 +8,7 @@ date: 2023-04-30
 link: "https://provok.ai/"
 linkLabel: "Magazine website"
 heroImage: "../../assets/portfolio/provok-ai.jpg"
-order: 1
+order: 2
 ---
 
 Product made for Cyberia Lab. It is the first AI-generated fashion magazine, with content created with Midjourney, Stable Diffusion, ChatGPT and other AI tools.
