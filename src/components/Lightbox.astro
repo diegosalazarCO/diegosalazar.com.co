@@ -1,0 +1,128 @@
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="close" id="lightbox-close" aria-label="Close">✕</button>
+  <button class="nav prev" id="lightbox-prev" aria-label="Previous image">‹</button>
+  <img id="lightbox-img" alt="" />
+  <button class="nav next" id="lightbox-next" aria-label="Next image">›</button>
+</div>
+
+<style>
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.92);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .lightbox.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .lightbox img {
+    max-width: min(92vw, 1200px);
+    max-height: 88vh;
+    width: auto;
+    object-fit: contain;
+  }
+  .close,
+  .nav {
+    position: fixed;
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .close {
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+  }
+  .nav {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    font-size: 1.8rem;
+  }
+  .prev {
+    left: 16px;
+  }
+  .next {
+    right: 16px;
+  }
+  .lightbox.single .nav {
+    display: none;
+  }
+  .close:hover,
+  .nav:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  @media (max-width: 640px) {
+    .nav {
+      width: 40px;
+      height: 40px;
+      font-size: 1.4rem;
+    }
+  }
+</style>
+
+<script>
+  const lightbox = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img') as HTMLImageElement | null;
+  let gallery: HTMLImageElement[] = [];
+  let currentIndex = 0;
+
+  function show(index: number) {
+    if (!img || !gallery[index]) return;
+    currentIndex = index;
+    img.src = gallery[index].currentSrc || gallery[index].src;
+    img.alt = gallery[index].alt;
+  }
+
+  function open(index: number) {
+    gallery = Array.from(document.querySelectorAll('.content img, .lightbox-img'));
+    show(index);
+    lightbox?.classList.add('open');
+    lightbox?.classList.toggle('single', gallery.length <= 1);
+    lightbox?.setAttribute('aria-hidden', 'false');
+  }
+
+  function close() {
+    lightbox?.classList.remove('open');
+    lightbox?.setAttribute('aria-hidden', 'true');
+  }
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const clicked = target.closest('.content img, .lightbox-img') as HTMLImageElement | null;
+    if (!clicked) return;
+    gallery = Array.from(document.querySelectorAll('.content img, .lightbox-img'));
+    open(gallery.indexOf(clicked));
+  });
+
+  document.getElementById('lightbox-close')?.addEventListener('click', close);
+  document.getElementById('lightbox-prev')?.addEventListener('click', () => show((currentIndex - 1 + gallery.length) % gallery.length));
+  document.getElementById('lightbox-next')?.addEventListener('click', () => show((currentIndex + 1) % gallery.length));
+
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) close();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox?.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show((currentIndex - 1 + gallery.length) % gallery.length);
+    if (e.key === 'ArrowRight') show((currentIndex + 1) % gallery.length);
+  });
+</script>

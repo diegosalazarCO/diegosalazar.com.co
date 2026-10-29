@@ -4,14 +4,18 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('portfolio');
-  return projects.map((project) => ({
+  const projects = (await getCollection('portfolio')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((project, i) => ({
     params: { slug: project.id },
-    props: { project },
+    props: {
+      project,
+      prev: projects[i - 1] ?? projects[projects.length - 1],
+      next: projects[i + 1] ?? projects[0],
+    },
   }));
 }
 
-const { project } = Astro.props;
+const { project, prev, next } = Astro.props;
 const { title, summary, client, role, category, tags, date, link, linkLabel, heroImage, heroVideo } = project.data;
 const { Content } = await render(project);
 ---
@@ -22,7 +26,7 @@ const { Content } = await render(project);
     {heroVideo ? (
       <video src={heroVideo} poster={heroImage.src} controls autoplay muted loop playsinline />
     ) : (
-      <Image src={heroImage} alt={title} width={1300} height={731} />
+      <Image class="lightbox-img" src={heroImage} alt={title} width={1300} height={731} />
     )}
 
     <div class="content">
@@ -62,13 +66,30 @@ const { Content } = await render(project);
       )}
     </dl>
 
-    <p><a href="/portfolio/">← Back to portfolio</a></p>
+    <nav class="project-nav">
+      <a href={`/portfolio-item/${prev.id}/`} class="prev">
+        <span class="muted label">← Previous</span>
+        <span class="proj-title">{prev.data.title}</span>
+      </a>
+      <a href="/portfolio/" class="all">All projects</a>
+      <a href={`/portfolio-item/${next.id}/`} class="next">
+        <span class="muted label">Next →</span>
+        <span class="proj-title">{next.data.title}</span>
+      </a>
+    </nav>
   </article>
 </BaseLayout>
 
 <style>
   .item {
     padding: 48px 0;
+  }
+  .item :global(.lightbox-img) {
+    cursor: zoom-in;
+    transition: opacity 0.2s ease;
+  }
+  .item :global(.lightbox-img:hover) {
+    opacity: 0.85;
   }
   .content {
     max-width: 680px;
@@ -85,5 +106,56 @@ const { Content } = await render(project);
     text-transform: uppercase;
     font-size: 0.8rem;
     color: var(--color-muted);
+  }
+  .project-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+  }
+  .project-nav a {
+    transition: color 0.25s var(--ease-out);
+  }
+  .prev,
+  .next {
+    display: flex;
+    flex-direction: column;
+  }
+  .next {
+    align-items: flex-end;
+    text-align: right;
+  }
+  .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .proj-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+  }
+  .all {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+    order: 3;
+  }
+  @media (min-width: 640px) {
+    .project-nav {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .all {
+      order: 2;
+    }
+    .next {
+      order: 3;
+    }
   }
 </style>
