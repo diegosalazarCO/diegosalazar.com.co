@@ -51,7 +51,7 @@ const aspects = ['tall', 'square', 'wide'] as const;
 <script>
   import { moveIndicator, withViewTransition } from '../../lib/filterBar';
 
-  const cards = document.querySelectorAll<HTMLAnchorElement>('#grid .post');
+  const cards = document.querySelectorAll<HTMLElement>('#grid .post');
   let activeCategory = 'all';
 
   function applyFilters() {

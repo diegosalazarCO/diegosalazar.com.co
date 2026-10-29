@@ -15,6 +15,7 @@ const portfolio = defineCollection({
       link: z.string().url().optional(),
       linkLabel: z.string().optional(),
       heroImage: image(),
+      thumbnail: image().optional(),
       heroVideo: z.string().optional(),
       gallery: z.array(z.object({ image: image().optional(), video: z.string().optional() })).default([]),
       layout: z.enum(['standard', 'video', 'gallery']).default('standard'),
@@ -35,6 +36,7 @@ const blog = defineCollection({
       audioUrl: z.string().url().optional(),
       videoUrl: z.string().url().optional(),
       layout: z.enum(['standard', 'micro', 'embed']).default('standard'),
+      source: z.enum(['twitter']).optional(),
     }),
 });
 

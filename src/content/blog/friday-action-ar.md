@@ -4,6 +4,7 @@ date: 2018-08-06
 categories: ["ai", "ar", "inspiration"]
 tags: ["ai", "ar"]
 layout: micro
+source: twitter
 ---
 
 1\. Coding an [#AR](https://twitter.com/hashtag/AR?src=hashtag_click) demo app
