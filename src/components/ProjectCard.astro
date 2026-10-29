@@ -7,14 +7,15 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, category, heroImage } = project.data;
+const { title, category, heroImage, thumbnail } = project.data;
+const cardImage = thumbnail ?? heroImage;
 const categoryParts = category.split(' ');
 const categorySlugs = categoryParts.map((c) => c.toLowerCase()).join(' ');
 ---
 
 <a class="card" href={`/portfolio-item/${project.id}/`} data-categories={categorySlugs}>
   <div class="frame">
-    <Image src={heroImage} alt={title} width={Math.min(heroImage.width, 640)} />
+    <Image src={cardImage} alt={title} width={Math.min(cardImage.width, 640)} />
   </div>
   <div class="info glass">
     <h3>{title}</h3>

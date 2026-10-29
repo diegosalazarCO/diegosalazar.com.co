@@ -7,7 +7,8 @@ tags: ["Linux", "Technology"]
 date: 2015-04-07
 link: "https://github.com/diegosalazarCO/awesome-wm"
 linkLabel: "Source on GitHub"
-heroImage: "../../assets/portfolio/tron-awesomewm.jpeg"
+heroImage: "../../assets/portfolio/tron-awesomewm.png"
+thumbnail: "../../assets/portfolio/tron-awesomewm-thumb.jpeg"
 order: 9
 ---
 

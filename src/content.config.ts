@@ -15,6 +15,7 @@ const portfolio = defineCollection({
       link: z.string().url().optional(),
       linkLabel: z.string().optional(),
       heroImage: image(),
+      thumbnail: image().optional(),
       heroVideo: z.string().optional(),
       gallery: z.array(z.object({ image: image().optional(), video: z.string().optional() })).default([]),
       layout: z.enum(['standard', 'video', 'gallery']).default('standard'),

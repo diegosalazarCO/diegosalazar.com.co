@@ -6,6 +6,7 @@ category: "AR Brand Fashion"
 tags: ["3D", "Clo3D", "Lens Studio", "SnapAR"]
 date: 2022-07-27
 heroImage: "../../assets/portfolio/provok-art-studio.jpeg"
+thumbnail: "../../assets/portfolio/provok-art-studio-thumb.jpeg"
 heroVideo: "/videos/provok-art-studio.mp4"
 gallery:
   - video: "/videos/provok-art-studio-lau.mp4"

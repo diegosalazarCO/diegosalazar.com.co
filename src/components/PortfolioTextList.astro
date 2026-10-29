@@ -9,7 +9,8 @@ const { projects } = Astro.props;
 
 const previews = await Promise.all(
   projects.map(async (project) => {
-    const img = await getImage({ src: project.data.heroImage, width: Math.min(project.data.heroImage.width, 500) });
+    const preview = project.data.thumbnail ?? project.data.heroImage;
+    const img = await getImage({ src: preview, width: Math.min(preview.width, 500) });
     return { id: project.id, title: project.data.title, src: img.src };
   })
 );

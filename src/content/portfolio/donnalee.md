@@ -8,6 +8,7 @@ date: 2020-08-01
 link: "https://donnaleeoficial.com/"
 linkLabel: "Shop website"
 heroImage: "../../assets/portfolio/donnalee.jpg"
+thumbnail: "../../assets/portfolio/donnalee-thumb.jpg"
 gallery:
   - image: "../../assets/portfolio/gallery/donnalee-2.jpg"
   - image: "../../assets/portfolio/gallery/donnalee-3.jpg"
