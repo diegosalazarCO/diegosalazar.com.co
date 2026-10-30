@@ -39,7 +39,7 @@ export function glowTexture(): CanvasTexture {
 
 export function makeGlow(color: Color, size: number, opacity = 1): Sprite {
   const sprite = new Sprite(
-    new SpriteMaterial({ map: glowTexture(), color, blending: AdditiveBlending, depthWrite: false, transparent: true, opacity }),
+    new SpriteMaterial({ map: glowTexture(), color, blending: AdditiveBlending, depthWrite: false, depthTest: true, transparent: true, opacity, fog: false }),
   );
   sprite.scale.setScalar(size);
   return sprite;
@@ -47,12 +47,19 @@ export function makeGlow(color: Color, size: number, opacity = 1): Sprite {
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+/** Move-stall-move: `steps` bursts separated by hesitations, for a flow that is struggling. */
+const stutterEase = (t: number, steps: number) => {
+  const s = t * steps;
+  return (Math.floor(s) + easeInOut(s - Math.floor(s))) / steps;
+};
 
 interface Pulse {
   sprites: Sprite[];
   path: Curve<Vector3>;
   elapsed: number;
   duration: number;
+  stutter: number;
+  delay: number;
   done: () => void;
 }
 interface Burst {
@@ -83,16 +90,17 @@ export class Effects {
   constructor(private parent: Object3D) {}
 
   /** A bright packet with a short tail travelling along `path`. Resolves when it arrives. */
-  pulse(path: Curve<Vector3>, color: Color, { duration = 1, size = 1.1 } = {}): Promise<void> {
+  pulse(path: Curve<Vector3>, color: Color, { duration = 1, size = 1.1, stutter = 0, delay = 0 } = {}): Promise<void> {
     const trail = 6;
     const sprites: Sprite[] = [];
     for (let i = 0; i <= trail; i++) {
       const s = makeGlow(color, size * (1 - (i / (trail + 1)) * 0.75), 1 - (i / (trail + 1)) * 0.85);
       s.position.copy(path.getPointAt(0));
+      s.visible = delay === 0;
       this.parent.add(s);
       sprites.push(s);
     }
-    return new Promise((resolve) => this.pulses.push({ sprites, path, elapsed: 0, duration, done: resolve }));
+    return new Promise((resolve) => this.pulses.push({ sprites, path, elapsed: -delay, duration, stutter, delay, done: resolve }));
   }
 
   /** Expanding particle cloud. */
@@ -141,8 +149,13 @@ export class Effects {
     for (let i = this.pulses.length - 1; i >= 0; i--) {
       const p = this.pulses[i];
       p.elapsed += dt;
+      if (p.elapsed < 0) continue; // staggered start
       const u = Math.min(p.elapsed / p.duration, 1);
-      p.sprites.forEach((s, k) => s.position.copy(p.path.getPointAt(easeInOut(Math.max(0, u - k * 0.022)))));
+      const ease = p.stutter ? (v: number) => stutterEase(v, p.stutter) : easeInOut;
+      p.sprites.forEach((s, k) => {
+        s.visible = true;
+        s.position.copy(p.path.getPointAt(ease(Math.max(0, u - k * 0.022))));
+      });
       if (u >= 1) {
         p.sprites.forEach((s) => {
           this.parent.remove(s);

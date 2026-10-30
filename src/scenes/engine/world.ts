@@ -50,8 +50,18 @@ export interface WorldOptions {
   labelHost: HTMLElement;
   /** The empty HUD area the subject should be centred in. */
   clearArea: HTMLElement;
-  background: Color;
+  /** Scene background; `null` makes the canvas transparent so the page's CSS shows through. */
+  background: Color | null;
+  /** Fog colour (defaults to the background). */
+  fog?: Color;
+  fogDensity?: number;
+  /** Key light colour (defaults to `accent`) and the cool rim light. */
   accent: Color;
+  keyLight?: Color;
+  rimLight?: Color;
+  exposure?: number;
+  envIntensity?: number;
+  maxPixelRatio?: number;
 }
 
 const PORTRAIT_BELOW = 0.9;
@@ -80,7 +90,7 @@ export class World implements Scenery {
   private stages = new Set<Stage>();
   private active?: Stage;
   private leaving?: Stage;
-  private override: Pose | null = null;
+  private override: Pose | (() => Pose) | null = null;
   private labels = new Set<Label3D>();
 
   private goalPosition = new Vector3();
@@ -94,27 +104,29 @@ export class World implements Scenery {
 
   constructor(private opts: WorldOptions) {
     // throws when WebGL is unavailable; the caller shows the written fallback
-    this.renderer = new WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer = new WebGLRenderer({ antialias: true, powerPreference: 'high-performance', alpha: opts.background === null });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, opts.maxPixelRatio ?? 2));
     this.renderer.toneMapping = ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.05;
+    this.renderer.toneMappingExposure = opts.exposure ?? 1.05;
     this.renderer.domElement.setAttribute('aria-hidden', 'true');
     opts.host.appendChild(this.renderer.domElement);
 
-    this.scene.background = opts.background;
-    this.scene.fog = new FogExp2(opts.background, 0.006);
+    if (opts.background) this.scene.background = opts.background;
+    else this.renderer.setClearColor(0x000000, 0);
+    const fog = opts.fog ?? opts.background;
+    if (fog) this.scene.fog = new FogExp2(fog, opts.fogDensity ?? 0.006);
 
     // soft reflections for the metal parts, then a warm key and a cool rim
     const pmrem = new PMREMGenerator(this.renderer);
     const room = new RoomEnvironment();
     this.scene.environment = pmrem.fromScene(room, 0.04).texture;
-    this.scene.environmentIntensity = 0.42;
+    this.scene.environmentIntensity = opts.envIntensity ?? 0.42;
     room.dispose();
     pmrem.dispose();
     this.scene.add(new AmbientLight(0xffffff, 0.3));
-    const key = new DirectionalLight(opts.accent, 2.2);
+    const key = new DirectionalLight(opts.keyLight ?? opts.accent, 2.2);
     key.position.set(-14, 28, 20);
-    const rim = new DirectionalLight(0x9db4ff, 0.9);
+    const rim = new DirectionalLight(opts.rimLight ?? 0x9db4ff, 0.9);
     rim.position.set(20, 14, -18);
     this.scene.add(key, rim);
 
@@ -165,8 +177,11 @@ export class World implements Scenery {
     this.refit({ intro: first });
   }
 
-  /** Aim at an arbitrary pose inside the active stage (e.g. dive into one tile of a grid). `null` returns home. */
-  setPose(pose: Pose | null) {
+  /**
+   * Aim at an arbitrary pose inside the active stage (e.g. dive into one tile of a grid). `null` returns
+   * home. Pass a function when the pose depends on screen shape: it is re-evaluated on every refit.
+   */
+  setPose(pose: Pose | (() => Pose) | null) {
     this.override = pose;
     this.userMoved = false;
     this.refit();
@@ -228,7 +243,7 @@ export class World implements Scenery {
   refit({ intro = false } = {}) {
     const stage = this.active;
     if (!stage) return;
-    const pose = this.override ?? stage.pose(this.portrait);
+    const pose = typeof this.override === 'function' ? this.override() : (this.override ?? stage.pose(this.portrait));
 
     const host = this.opts.host.getBoundingClientRect();
     const rect = this.opts.clearArea.getBoundingClientRect();

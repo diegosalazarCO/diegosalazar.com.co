@@ -37,7 +37,13 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
     </a>
   )}
   {kind === 'default' && (
-    <a class={`media ${heroImage ? aspect : `text-only ${aspect}`}`} href={href} tabindex="-1" aria-hidden="true">
+    <a
+      class={`media ${heroImage ? (isInteractive ? 'natural' : aspect) : `text-only ${aspect}`}`}
+      style={isInteractive && heroImage ? `aspect-ratio: ${heroImage.width} / ${heroImage.height}` : undefined}
+      href={href}
+      tabindex="-1"
+      aria-hidden="true"
+    >
       {heroImage ? (
         <Image src={heroImage} alt="" width={Math.min(heroImage.width, 600)} />
       ) : (
@@ -92,6 +98,10 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
   }
   .media.wide {
     aspect-ratio: 4 / 3;
+  }
+  /* interactive posts: the card is exactly as tall as its preview image (aspect-ratio is set inline) */
+  .media.natural :global(img) {
+    object-fit: cover;
   }
   .media :global(img) {
     width: 100%;

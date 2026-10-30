@@ -4,14 +4,16 @@ import './hud.css';
 interface Props {
   /** `short` is shown on phones; the number prefix is dropped there too. */
   tabs: { id: string; label: string; short: string }[];
+  /** Prefix labels with 01, 02… (hidden on phones). Off for option pickers. */
+  numbered?: boolean;
 }
-const { tabs } = Astro.props;
+const { tabs, numbered = true } = Astro.props;
 ---
 
 <div class="hud-tabs seg" role="tablist" data-hud>
   {tabs.map((tab, i) => (
     <button class="seg-btn" role="tab" type="button" data-tab={tab.id} aria-selected="false">
-      <b>{String(i + 1).padStart(2, '0')}</b>
+      {numbered && <b>{String(i + 1).padStart(2, '0')}</b>}
       <span class="long">{tab.label}</span>
       <span class="short">{tab.short}</span>
     </button>

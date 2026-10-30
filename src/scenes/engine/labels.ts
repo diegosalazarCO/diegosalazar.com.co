@@ -10,6 +10,7 @@ const scratch = new Vector3();
 export class Label3D {
   readonly el = document.createElement('div');
   private shown = true;
+  private below: boolean;
 
   constructor(
     host: HTMLElement,
@@ -23,6 +24,7 @@ export class Label3D {
   ) {
     this.el.className = `node-label ${className}`.trim();
     this.set(title, sub);
+    this.below = className.split(' ').includes('below');
     host.appendChild(this.el);
   }
 
@@ -46,7 +48,7 @@ export class Label3D {
     if (!visible) return;
     const x = (scratch.x * 0.5 + 0.5) * width;
     const y = (-scratch.y * 0.5 + 0.5) * height;
-    this.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, calc(-100% - ${this.liftPx}px))`;
+    this.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, ${this.below ? '10px' : `calc(-100% - ${this.liftPx}px)`})`;
   }
 
   /** Hidden stages (and anything inside them) must not leave their labels behind. */
