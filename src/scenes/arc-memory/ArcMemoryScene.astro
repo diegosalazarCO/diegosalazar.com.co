@@ -1,0 +1,443 @@
+---
+import Caption from '../ui/Caption.astro';
+import Dock from '../ui/Dock.astro';
+import Tabs from '../ui/Tabs.astro';
+
+const tabs = [
+  { id: 'hardware', label: 'Hardware & ARC', short: 'Hardware' },
+  { id: 'architecture', label: 'iOS Architecture', short: 'Architecture' },
+];
+---
+
+<!--
+  Scene: how Swift's ARC works, from a DRAM cell up to a leaking MVVM stack.
+  Markup here is HUD only; the 3D lives in ./main.ts and loads after first paint.
+-->
+<div class="arc" data-scene="arc-memory" data-state="loading">
+  <div class="canvas-host" data-canvas></div>
+  <div class="labels" data-labels></div>
+  <div class="hud-flash" data-flash></div>
+
+  <div class="hud-loading" role="status">
+    <span>Booting memory</span>
+    <span class="bar"></span>
+  </div>
+  <div class="hud-fallback">
+    <p>This scene needs WebGL and your browser couldn't start it. The write-up covers the whole story.</p>
+    <button class="btn" type="button" data-about-open>Read the write-up</button>
+  </div>
+  <noscript>
+    <style>
+      [data-scene='arc-memory'] .hud-loading { display: none; }
+      [data-scene='arc-memory'] .hud-fallback { display: grid; }
+    </style>
+  </noscript>
+
+  <Tabs tabs={tabs} />
+
+  <!-- The readout doubles as the legend: swatch = line style in the scene, number = live count. -->
+  <div class="hud-readout" data-hud data-panel="hardware" aria-label="Live registers">
+    <span class="item"><span>x0</span><span class="v" data-readout="x0">—</span></span>
+    <span class="item" style="--c: var(--scene-strong)"><span class="swatch"></span>Strong<span class="v" data-readout="strong">0</span></span>
+    <span class="item" style="--c: var(--scene-weak)"><span class="swatch dashed"></span>Weak<span class="v" data-readout="weak">0</span></span>
+    <span class="item" style="--c: var(--scene-unowned)"><span class="swatch"></span>Unowned<span class="v" data-readout="unowned">0</span></span>
+  </div>
+  <div class="hud-readout" data-hud data-panel="architecture" aria-label="Heap summary">
+    <span class="item"><span>Sessions</span><span class="v" data-readout="sessions">0</span></span>
+    <span class="item leaks" style="--c: var(--scene-fault)"><span class="swatch"></span>Leaked<span class="v" data-readout="leaked">0</span></span>
+    <span class="item" style="--c: var(--scene-strong)"><span class="swatch"></span>Strong</span>
+    <span class="item" style="--c: var(--scene-weak)"><span class="swatch dashed"></span>Weak</span>
+  </div>
+
+  <Caption>
+    <Fragment slot="actions">
+      <button class="icon-btn" type="button" data-action="tour" aria-pressed="false" aria-label="Play the guided story" title="Play the guided story">
+        <svg class="when-idle" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" /></svg>
+        <svg class="when-playing" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /></svg>
+      </button>
+      <button class="icon-btn" type="button" data-action="reset" aria-label="Reset" title="Reset">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1M3.5 4v4.5H8" /></svg>
+      </button>
+    </Fragment>
+  </Caption>
+
+  <Dock panel="hardware" group="hardware">
+    <button class="dock-btn" type="button" data-action="alloc" data-kind="primary" title="Allocate a heap object (RC = 1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" /><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" /></svg>
+      Alloc
+    </button>
+    <span class="dock-sep"></span>
+    <button class="dock-btn" type="button" data-action="strong" style="--tint: var(--scene-strong)" title="Add a strong reference (+1 RC)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /></svg>
+      Strong
+    </button>
+    <button class="dock-btn" type="button" data-action="weak" style="--tint: var(--scene-weak)" title="Add a weak reference (via side table)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke-dasharray="3.4 3.4" /><path d="M12 8v8M8 12h8" /></svg>
+      Weak
+    </button>
+    <button class="dock-btn" type="button" data-action="unowned" style="--tint: var(--scene-unowned)" title="Add an unowned reference (not counted)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 3l9 16H3z" stroke-linejoin="round" /><path d="M12 9v4M12 16.2v.1" /></svg>
+      Unowned
+    </button>
+    <span class="dock-sep"></span>
+    <button class="dock-btn" type="button" data-action="release" title="Release one strong reference">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M8 12h8" /></svg>
+      Release
+    </button>
+    <button class="dock-btn" type="button" data-action="read" style="--tint: var(--scene-ok)" title="Make the CPU follow every pointer it holds">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="2.8" /></svg>
+      Read
+    </button>
+  </Dock>
+
+  <Dock panel="architecture" group="arch-actions">
+    <label class="dock-toggle" title="Declare the Interactor's back-reference as weak">
+      <input type="checkbox" data-fix />
+      <span class="switch" aria-hidden="true"></span>
+      <span class="what">Weak<br />back-ref</span>
+    </label>
+    <!-- On phones the app mockup is hidden, so its four buttons live here -->
+    <span class="dock-sep small-only"></span>
+    <button class="dock-btn small-only" type="button" data-action="arch-login" data-kind="primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H4M20 4v16" /></svg>
+      Log in
+    </button>
+    <button class="dock-btn small-only" type="button" data-action="arch-feature" style="--tint: var(--scene-strong)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      Feature
+    </button>
+    <button class="dock-btn small-only" type="button" data-action="arch-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+      Back
+    </button>
+    <button class="dock-btn small-only" type="button" data-action="arch-logout" style="--tint: var(--scene-fault)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17l5-5-5-5M19 12H8M10 4H4v16h6" /></svg>
+      Log out
+    </button>
+  </Dock>
+
+  <!-- Desktop only: the app whose screens the right-hand graph is the memory of -->
+  <div class="phone" data-hud data-panel="architecture" data-group="phone" aria-label="Demo app">
+    <span class="notch"></span>
+    <div class="slider">
+      <section class="screen">
+        <div class="brand">
+          <span class="logo">F</span>
+          <h3>FinApp Clean</h3>
+          <p>MVVM · Clean Architecture</p>
+        </div>
+        <div class="field">user@clean-arch.ios</div>
+        <div class="field">••••••••••••</div>
+        <button type="button" class="app-btn" data-action="arch-login">Log in to Dashboard</button>
+        <p class="hint">Builds DashboardVC, ViewModel and Interactor</p>
+      </section>
+      <section class="screen">
+        <header><h3>Dashboard</h3><span class="live">Live</span></header>
+        <div class="row"><i></i><i class="short"></i></div>
+        <div class="row"><i></i><i class="short"></i></div>
+        <button type="button" class="app-btn" data-action="arch-feature">Open feature →</button>
+        <button type="button" class="app-btn danger" data-action="arch-logout">Log out</button>
+      </section>
+      <section class="screen">
+        <header>
+          <button type="button" class="back-btn" data-action="arch-back">← Back</button>
+          <h3>Feature</h3>
+        </header>
+        <div class="card"><div class="media">Module payload</div><p>Owned by the Dashboard. Going back frees it immediately.</p></div>
+        <button type="button" class="app-btn danger" data-action="arch-logout">Log out</button>
+      </section>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  /* Colour tokens: the site accent plus a small set of semantic colours that sit comfortably next to it */
+  .arc {
+    --scene-strong: var(--color-accent);
+    --scene-weak: #8fb4ff;
+    --scene-unowned: #f2c46d;
+    --scene-fault: #ff5a4d;
+    --scene-ok: #8fe0b4;
+    --hud-ok: var(--scene-ok);
+    --hud-warn: var(--scene-unowned);
+    --hud-fault: var(--scene-fault);
+    display: contents;
+  }
+
+  .arc .hud-readout .leaks .v[data-zero='false'] {
+    color: var(--scene-fault);
+  }
+
+  /* weak back-reference switch, in the dock */
+  .arc .dock-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px 0 8px;
+    cursor: pointer;
+    color: var(--color-text);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.7rem;
+    line-height: 1.15;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .arc .dock-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .arc .dock-toggle .switch {
+    position: relative;
+    flex: none;
+    width: 40px;
+    height: 22px;
+    border-radius: 999px;
+    background: #3a3a3a;
+    transition: background 0.3s var(--ease-out);
+  }
+  .arc .dock-toggle .switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.3s var(--ease-out);
+  }
+  .arc .dock-toggle input:checked + .switch {
+    background: var(--scene-weak);
+  }
+  .arc .dock-toggle input:checked + .switch::after {
+    transform: translateX(18px);
+  }
+  @media (max-width: 559px) {
+    .arc .dock-toggle {
+      grid-column: span 2;
+      justify-content: center;
+      padding: 0;
+    }
+  }
+  .arc .dock-toggle input:focus-visible + .switch {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* the phone mockup only exists on roomy screens; elsewhere its buttons move into the dock */
+  .arc .phone {
+    display: none;
+  }
+  @media (min-width: 900px) and (min-height: 640px) {
+    .stage {
+      --phone-h: clamp(390px, calc(100dvh - 300px), 540px);
+      --phone-w: calc(var(--phone-h) * 0.5);
+    }
+    .arc .small-only {
+      display: none;
+    }
+    .arc .phone {
+      display: block;
+      grid-area: main;
+      justify-self: start;
+      align-self: center;
+      position: relative;
+      width: var(--phone-w);
+      height: var(--phone-h);
+      font-size: calc(var(--phone-h) / 38);
+      overflow: hidden;
+      border: 0.45em solid #2a2a2a;
+      border-radius: 2.9em;
+      background: #0d0d0d;
+      box-shadow: 0 2em 4em -1em rgba(0, 0, 0, 0.8), inset 0 0 0 1px #3d3d3d;
+    }
+    /* keep the 3D subject centred in what is left of the screen */
+    .stage:has([data-tab='architecture']) [data-clear] {
+      margin-left: calc(var(--phone-w) + 28px);
+    }
+    .stage[data-focus]:has([data-tab='architecture']) [data-clear] {
+      margin-left: 0;
+    }
+  }
+
+  .arc .phone .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+    width: 9em;
+    height: 1.7em;
+    transform: translateX(-50%);
+    border-radius: 0 0 1.2em 1.2em;
+    background: #2a2a2a;
+  }
+  .arc .phone .slider {
+    display: flex;
+    width: 300%;
+    height: 100%;
+    transition: transform 0.5s var(--ease-out);
+  }
+  .arc[data-screen='dash'] .phone .slider {
+    transform: translateX(-33.333%);
+  }
+  .arc[data-screen='feat'] .phone .slider {
+    transform: translateX(-66.666%);
+  }
+  .arc .phone .screen {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    width: 33.333%;
+    height: 100%;
+    padding: 3.4em 1.4em 1.4em;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 1em;
+    line-height: 1.3;
+  }
+  .arc .phone h3 {
+    margin: 0;
+    font-size: 1.5em;
+  }
+  .arc .phone .brand {
+    margin: 1.6em 0 1.2em;
+    text-align: center;
+  }
+  .arc .phone .brand p,
+  .arc .phone .hint {
+    margin: 0.3em 0 0;
+    color: var(--color-muted);
+    font-size: 0.85em;
+    text-align: center;
+  }
+  .arc .phone .logo {
+    display: grid;
+    place-items: center;
+    width: 3.4em;
+    height: 3.4em;
+    margin: 0 auto 0.8em;
+    border-radius: 1em;
+    background: var(--color-accent);
+    color: #111;
+    font-family: var(--font-display);
+    font-size: 1.5em;
+  }
+  .arc .phone .field {
+    padding: 0.85em 1em;
+    border: 1px solid var(--color-border);
+    border-radius: 0.8em;
+    background: #161616;
+    color: var(--color-muted);
+    font-family: var(--hud-mono);
+    font-size: 0.8em;
+  }
+  .arc .phone header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8em;
+  }
+  .arc .phone .live {
+    padding: 0.15em 0.7em;
+    border: 1px solid var(--color-accent);
+    border-radius: 999px;
+    color: var(--color-accent);
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .arc .phone .row,
+  .arc .phone .card {
+    padding: 0.9em 1em;
+    border: 1px solid var(--color-border);
+    border-radius: 0.9em;
+    background: #161616;
+  }
+  .arc .phone .row i {
+    display: block;
+    height: 0.7em;
+    width: 70%;
+    margin-bottom: 0.5em;
+    border-radius: 0.4em;
+    background: #3a3a3a;
+  }
+  .arc .phone .row i.short {
+    width: 40%;
+    height: 0.55em;
+    margin: 0;
+    background: #2a2a2a;
+  }
+  .arc .phone .card {
+    flex: 1;
+  }
+  .arc .phone .card .media {
+    display: grid;
+    place-items: center;
+    height: 6em;
+    margin-bottom: 0.8em;
+    border-radius: 0.7em;
+    background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+    color: var(--color-muted);
+    font-family: var(--hud-mono);
+    font-size: 0.75em;
+  }
+  .arc .phone .card p {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.85em;
+  }
+  .arc .phone .app-btn,
+  .arc .phone .back-btn {
+    border: 0;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: transform 0.2s var(--ease-out), background 0.2s ease, opacity 0.2s ease;
+  }
+  .arc .phone .app-btn {
+    width: 100%;
+    padding: 0.85em;
+    border-radius: 0.8em;
+    background: var(--color-accent);
+    color: #111;
+    font-size: 0.95em;
+  }
+  .arc .phone .app-btn:first-of-type:not(:last-child) {
+    margin-top: auto;
+  }
+  .arc .phone .app-btn:hover {
+    background: var(--color-text);
+    transform: translateY(-1px);
+  }
+  .arc .phone .app-btn.danger {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--scene-fault);
+    color: var(--scene-fault);
+  }
+  .arc .phone .app-btn.danger:hover {
+    background: var(--scene-fault);
+    color: #111;
+  }
+  .arc .phone .back-btn {
+    background: none;
+    color: var(--color-accent);
+    font-size: 0.95em;
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-scene="arc-memory"]');
+  if (root) {
+    // three.js and the scene code load after first paint, in their own chunk
+    import('./main')
+      .then(({ boot }) => boot(root))
+      .catch((error) => {
+        console.error(error);
+        root.dataset.state = 'failed';
+      });
+  }
+</script>

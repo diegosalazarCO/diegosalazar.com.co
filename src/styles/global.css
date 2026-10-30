@@ -121,6 +121,12 @@ h4 {
   transform: translateY(-100%);
 }
 
+/* Immersive pages (blog `layout: fullscreen`): the page is the stage — no chrome, no scroll */
+body.immersive {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 /* Prose spacing for rendered markdown inside a `.content` wrapper
    (blog posts, project descriptions) */
 .content h2,

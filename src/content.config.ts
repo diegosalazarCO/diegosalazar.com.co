@@ -26,18 +26,25 @@ const portfolio = defineCollection({
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
   schema: ({ image }) =>
-    z.object({
-      title: z.string(),
-      date: z.coerce.date(),
-      categories: z.array(z.string()).default([]),
-      tags: z.array(z.string()).default([]),
-      heroImage: image().optional(),
-      embedUrl: z.string().url().optional(),
-      audioUrl: z.string().url().optional(),
-      videoUrl: z.string().url().optional(),
-      layout: z.enum(['standard', 'micro', 'embed']).default('standard'),
-      source: z.enum(['twitter']).optional(),
-    }),
+    z
+      .object({
+        title: z.string(),
+        date: z.coerce.date(),
+        categories: z.array(z.string()).default([]),
+        tags: z.array(z.string()).default([]),
+        heroImage: image().optional(),
+        embedUrl: z.string().url().optional(),
+        audioUrl: z.string().url().optional(),
+        videoUrl: z.string().url().optional(),
+        layout: z.enum(['standard', 'micro', 'embed', 'fullscreen']).default('standard'),
+        // `fullscreen` posts render a registered interactive scene (see src/scenes/index.ts)
+        scene: z.string().optional(),
+        source: z.enum(['twitter']).optional(),
+      })
+      .refine((post) => post.layout !== 'fullscreen' || post.scene, {
+        message: 'Posts with layout "fullscreen" need a `scene` id',
+        path: ['scene'],
+      }),
 });
 
 export const collections = { portfolio, blog };

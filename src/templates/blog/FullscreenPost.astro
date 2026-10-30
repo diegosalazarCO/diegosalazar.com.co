@@ -1,0 +1,296 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import PostMeta from '../../components/PostMeta.astro';
+import { isSceneId, scenes } from '../../scenes';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+const { post } = Astro.props;
+const { title, date, categories, tags, scene } = post.data;
+
+if (!isSceneId(scene)) {
+  throw new Error(`"${post.id}" uses layout "fullscreen" but scene "${scene}" isn't registered in src/scenes/index.ts`);
+}
+const Scene = scenes[scene];
+const { Content } = await render(post);
+---
+
+<!--
+  The stage is a viewport-sized grid. The scene fills it with its own HUD by placing elements into
+  the named areas below (back / tabs / tools / readout / caption / dock); `.clear` is the empty
+  middle area the scene frames its camera in, so 3D content never hides under the HUD.
+-->
+<article class="stage" data-stage aria-label={title}>
+  <a class="back glass" href="/blog/" aria-label="Back to the blog">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M19 12H5M11 6l-6 6 6 6" />
+    </svg>
+    <span>Blog</span>
+  </a>
+
+  <div class="tools">
+    <button class="tool glass" type="button" data-about-open aria-label="About this post" title="About this post">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" />
+      </svg>
+    </button>
+    <button class="tool glass" type="button" data-focus-toggle aria-pressed="false" aria-label="Focus view" title="Focus view: hide the interface (F)">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" /><circle cx="12" cy="12" r="2.8" />
+      </svg>
+    </button>
+    <button class="tool glass tool-fs" type="button" data-fullscreen-toggle aria-pressed="false" aria-label="Full screen" title="Full screen" hidden>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="clear" data-clear aria-hidden="true"></div>
+
+  <Scene />
+
+  <dialog class="about" data-about aria-labelledby="about-title">
+    <div class="about-card glass">
+      <button class="about-close" type="button" data-about-close aria-label="Close">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+      <PostMeta date={date} categories={categories} />
+      <h1 id="about-title">{title}</h1>
+      <div class="content">
+        <Content />
+      </div>
+      {tags.length > 0 && <p class="muted tags">{tags.join(' · ')}</p>}
+      <p><a class="link-underline" href="/blog/">← Back to blog</a></p>
+    </div>
+  </dialog>
+</article>
+
+<style>
+  .stage {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      'back tabs tools'
+      'readout readout readout'
+      'main main main'
+      'caption caption caption'
+      'dock dock dock';
+    gap: 10px;
+    padding: 12px;
+    overflow: hidden;
+    background: var(--color-bg);
+    /* the HUD opts back in per element; empty grid cells must never swallow drags on the canvas */
+    pointer-events: none;
+  }
+  @media (min-width: 1000px) {
+    .stage {
+      grid-template-areas:
+        'back tabs tools'
+        'readout readout readout'
+        'main main main'
+        'caption caption dock';
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      gap: 12px 16px;
+      padding: 18px 22px;
+    }
+  }
+
+  .clear {
+    grid-area: main;
+    pointer-events: none;
+  }
+  /* Focus view: the whole viewport becomes the clear area, so the scene grows to fill it */
+  .stage[data-focus] .clear {
+    position: absolute;
+    inset: 0;
+  }
+
+  .back,
+  .tools {
+    z-index: 3;
+    pointer-events: auto;
+    transition: opacity 0.35s var(--ease-out);
+  }
+  .stage[data-focus] .back,
+  .stage[data-focus] .tools {
+    opacity: 0.55;
+  }
+  .stage[data-focus] .back:hover,
+  .stage[data-focus] .tools:hover {
+    opacity: 1;
+  }
+
+  .back {
+    grid-area: back;
+    align-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .back:hover {
+    border-color: var(--color-accent);
+  }
+
+  .tools {
+    grid-area: tools;
+    align-self: start;
+    display: flex;
+    gap: 8px;
+  }
+  .tool {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border-radius: 50%;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .tool:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  .tool[aria-pressed='true'] {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #111;
+  }
+
+  /* Phones: icon-only back button and no fullscreen toggle (browsers already hide their chrome) */
+  @media (max-width: 559px) {
+    .back {
+      width: 40px;
+      padding: 0;
+      justify-content: center;
+    }
+    .back span,
+    .tool-fs {
+      display: none;
+    }
+    .stage {
+      padding: 10px;
+      gap: 8px;
+    }
+  }
+
+  /* HUD pieces authored by a scene fade out in focus view */
+  .stage :global([data-hud]) {
+    transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+  }
+  .stage[data-focus] :global([data-hud]) {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+  }
+
+  .about {
+    pointer-events: auto;
+    width: min(620px, calc(100vw - 24px));
+    max-height: min(82dvh, 760px);
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--color-text);
+    overflow: visible;
+  }
+  .about::backdrop {
+    background: rgba(8, 8, 8, 0.72);
+    backdrop-filter: blur(6px);
+  }
+  .about-card {
+    position: relative;
+    max-height: min(82dvh, 760px);
+    overflow-y: auto;
+    padding: 32px 28px 28px;
+    border-radius: var(--radius-glass);
+    background: rgba(24, 24, 24, 0.82);
+  }
+  .about-card h1 {
+    font-size: clamp(1.7rem, 5vw, 2.4rem);
+    margin: 6px 0 20px;
+    padding-right: 36px;
+  }
+  .about-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .about-close:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  .tags {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+</style>
+
+<script>
+  const stage = document.querySelector<HTMLElement>('[data-stage]');
+
+  if (stage) {
+    const about = stage.querySelector<HTMLDialogElement>('[data-about]');
+    const focusBtn = stage.querySelector<HTMLButtonElement>('[data-focus-toggle]');
+    const fsBtn = stage.querySelector<HTMLButtonElement>('[data-fullscreen-toggle]');
+
+    // About sheet: the post's markdown, also the no-JS / no-WebGL reading of the piece
+    stage.querySelector('[data-about-open]')?.addEventListener('click', () => about?.showModal());
+    stage.querySelector('[data-about-close]')?.addEventListener('click', () => about?.close());
+    about?.addEventListener('click', (e) => {
+      if (e.target === about) about.close(); // click on the backdrop
+    });
+
+    // Focus view: scenes tag their HUD with [data-hud] and listen for `stage:focus`
+    const setFocus = (on: boolean) => {
+      stage.toggleAttribute('data-focus', on);
+      focusBtn?.setAttribute('aria-pressed', String(on));
+      stage.dispatchEvent(new CustomEvent('stage:focus', { detail: { on } }));
+    };
+    focusBtn?.addEventListener('click', () => setFocus(!stage.hasAttribute('data-focus')));
+    window.addEventListener('keydown', (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || about?.open) return;
+      if (e.key === 'f' || e.key === 'F') setFocus(!stage.hasAttribute('data-focus'));
+      else if (e.key === 'Escape' && stage.hasAttribute('data-focus')) setFocus(false);
+    });
+
+    // Fullscreen API (absent on iPhone Safari, so the button stays hidden there)
+    if (fsBtn && document.fullscreenEnabled) {
+      fsBtn.hidden = false;
+      fsBtn.addEventListener('click', () => {
+        if (document.fullscreenElement) void document.exitFullscreen();
+        else void document.documentElement.requestFullscreen();
+      });
+      document.addEventListener('fullscreenchange', () => {
+        fsBtn.setAttribute('aria-pressed', String(Boolean(document.fullscreenElement)));
+      });
+    }
+  }
+</script>
