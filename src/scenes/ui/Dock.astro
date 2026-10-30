@@ -1,0 +1,15 @@
+---
+import './hud.css';
+
+interface Props {
+  /** Hooks: [data-panel=id] shows it only for that tab; [data-group] scopes Hud.enableOnly(). */
+  panel?: string;
+  group?: string;
+}
+const { panel, group } = Astro.props;
+---
+
+<!-- A glass bar of controls. Buttons are `.dock-btn[data-action]`; `.dock-sep` divides groups. -->
+<div class="hud-dock glass" data-hud data-panel={panel} data-group={group}>
+  <slot />
+</div>

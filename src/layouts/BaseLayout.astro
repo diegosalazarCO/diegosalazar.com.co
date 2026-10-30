@@ -10,9 +10,15 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  /** Page owns the whole viewport (fullscreen posts): no header, footer or floating widgets. */
+  immersive?: boolean;
 }
 
-const { title, description = 'Diego Alexander Salazar — Tech creative and product developer.' } = Astro.props;
+const {
+  title,
+  description = 'Diego Alexander Salazar — Tech creative and product developer.',
+  immersive = false,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -30,15 +36,23 @@ const { title, description = 'Diego Alexander Salazar — Tech creative and prod
     <title>{title} — Diego Alexander Salazar</title>
     <meta name="description" content={description} />
   </head>
-  <body>
-    <Header />
-    <main class="wrap">
-      <slot />
-    </main>
-    <Footer />
-    <BackToTop />
-    <MusicToggle />
-    <Lightbox />
-    <ScrollReveal />
+  <body class:list={{ immersive }}>
+    {immersive ? (
+      <main>
+        <slot />
+      </main>
+    ) : (
+      <>
+        <Header />
+        <main class="wrap">
+          <slot />
+        </main>
+        <Footer />
+        <BackToTop />
+        <MusicToggle />
+        <Lightbox />
+        <ScrollReveal />
+      </>
+    )}
   </body>
 </html>

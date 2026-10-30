@@ -10,7 +10,8 @@ interface Props {
 }
 
 const { post, aspect = 'square' } = Astro.props;
-const { title, date, categories, heroImage, embedUrl, audioUrl, videoUrl, source } = post.data;
+const { title, date, categories, heroImage, embedUrl, audioUrl, videoUrl, source, layout } = post.data;
+const isInteractive = layout === 'fullscreen';
 const href = `/blog/${post.id}/`;
 const hasMedia = Boolean(embedUrl || audioUrl || videoUrl);
 const videoThumb = youtubeThumbnail(embedUrl);
@@ -40,15 +41,21 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
       {heroImage ? (
         <Image src={heroImage} alt="" width={Math.min(heroImage.width, 600)} />
       ) : (
-        <>
-          <span class="glass-badge notes-badge glass">
+        <span class="tile-title">{title}</span>
+      )}
+      {(isInteractive || !heroImage) && (
+        <span class="glass-badge notes-badge glass">
+          {isInteractive ? (
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+            </svg>
+          ) : (
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
               <path d="M9 7H6a3 3 0 0 0 0 6h3M15 7h3a3 3 0 0 1 0 6h-3M8 10h8" />
             </svg>
-            Notes
-          </span>
-          <span class="tile-title">{title}</span>
-        </>
+          )}
+          {isInteractive ? 'Interactive' : 'Notes'}
+        </span>
       )}
       {hasMedia && <span class="badge">▶</span>}
     </a>

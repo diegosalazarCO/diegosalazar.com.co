@@ -4,11 +4,14 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import StandardPost from '../../../templates/blog/StandardPost.astro';
 import MicroPost from '../../../templates/blog/MicroPost.astro';
 import EmbedPost from '../../../templates/blog/EmbedPost.astro';
+import FullscreenPost from '../../../templates/blog/FullscreenPost.astro';
+import { excerpt } from '../../../lib/embed';
 
 const templates = {
   standard: StandardPost,
   micro: MicroPost,
   embed: EmbedPost,
+  fullscreen: FullscreenPost,
 };
 
 export async function getStaticPaths() {
@@ -21,8 +24,13 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const Template = templates[post.data.layout];
+const immersive = post.data.layout === 'fullscreen';
 ---
 
-<BaseLayout title={post.data.title}>
+<BaseLayout
+  title={post.data.title}
+  description={immersive ? excerpt(post.body, 160) : undefined}
+  immersive={immersive}
+>
   <Template post={post} />
 </BaseLayout>

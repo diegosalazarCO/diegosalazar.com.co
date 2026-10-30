@@ -1,0 +1,601 @@
+/*
+ * Shared HUD vocabulary for interactive scenes. Pieces place themselves into the stage grid defined by
+ * templates/blog/FullscreenPost.astro (tabs / readout / caption / dock) and use the site tokens, so a new
+ * scene gets the same look for free. Scenes only add their own `--scene-*` colour tokens.
+ */
+:root {
+  --hud-ok: #8fe0b4;
+  --hud-warn: #f2c46d;
+  --hud-fault: #ff5a4d;
+  --hud-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+/* every HUD piece paints above the canvas (z 0) and the 3D labels (z 1) */
+[data-hud] {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.canvas-host {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+}
+.canvas-host:active {
+  cursor: grabbing;
+}
+.canvas-host canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.canvas-host::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.55));
+}
+.labels {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* --- segmented control (top tabs; also fits radio groups in a dock) ------------------------ */
+.hud-tabs {
+  grid-area: tabs;
+  justify-self: center;
+  align-self: start;
+}
+.seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+.seg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--color-muted);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s var(--ease-out), color 0.2s ease;
+}
+.seg-btn b {
+  opacity: 0.55;
+}
+.seg-btn:hover {
+  color: var(--color-text);
+}
+.seg-btn[aria-selected='true'] {
+  background: var(--color-accent);
+  color: #111;
+}
+.seg-btn .short {
+  display: none;
+}
+@media (max-width: 559px) {
+  .seg-btn {
+    padding: 0 12px;
+    font-size: 0.76rem;
+  }
+  .seg-btn b,
+  .seg-btn .long {
+    display: none;
+  }
+  .seg-btn .short {
+    display: inline;
+  }
+}
+
+/* --- readout strip: live values that double as the legend ---------------------------------- */
+.hud-readout {
+  grid-area: readout;
+  align-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  color: var(--color-muted);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 10px #000;
+  pointer-events: none;
+}
+.hud-readout .item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.hud-readout .swatch {
+  width: 18px;
+  height: 0;
+  border-top: 3px solid var(--c, var(--color-accent));
+  border-radius: 2px;
+}
+.hud-readout .swatch.dashed {
+  border-top-style: dashed;
+  border-top-width: 2px;
+}
+.hud-readout .v {
+  display: inline-block;
+  min-width: 1ch;
+  color: var(--color-text);
+  font-family: var(--hud-mono);
+  font-size: 0.86rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.bump {
+  animation: bump 0.5s var(--ease-out);
+}
+@keyframes bump {
+  0% {
+    transform: scale(1.6);
+    color: var(--color-accent);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (max-width: 559px) {
+  .hud-readout {
+    gap: 2px 12px;
+    font-size: 0.62rem;
+  }
+  .hud-readout .swatch {
+    width: 12px;
+  }
+  .hud-readout .v {
+    font-size: 0.74rem;
+  }
+}
+
+/* --- narrator card ------------------------------------------------------------------------ */
+.hud-caption {
+  --tone: var(--color-accent);
+  grid-area: caption;
+  align-self: end;
+  justify-self: start;
+  width: min(100%, 470px);
+  padding: 12px 16px 12px 18px;
+  border-radius: var(--radius-glass);
+  border-left: 3px solid var(--tone);
+  transition: border-color 0.3s ease;
+}
+.hud-caption[data-tone='ok'] {
+  --tone: var(--hud-ok);
+}
+.hud-caption[data-tone='warn'] {
+  --tone: var(--hud-warn);
+}
+.hud-caption[data-tone='fault'] {
+  --tone: var(--hud-fault);
+}
+.hud-caption header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hud-caption .kicker {
+  color: var(--color-muted);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.hud-caption .actions {
+  display: flex;
+  gap: 6px;
+  margin: -4px -6px -4px 0;
+}
+.hud-caption .title {
+  margin: 2px 0 6px;
+  font-size: 1.3rem;
+  color: var(--tone);
+}
+.hud-caption .text {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.hud-caption .title,
+.hud-caption .text {
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+.hud-caption.is-swapping .title,
+.hud-caption.is-swapping .text {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.hud-caption code,
+.hud-caption pre {
+  font-family: var(--hud-mono);
+  font-size: 0.82em;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+.hud-caption code {
+  padding: 1px 5px;
+}
+.hud-caption pre {
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  overflow-x: auto;
+}
+.hud-caption pre code {
+  padding: 0;
+  background: none;
+}
+.hud-caption .more {
+  margin-top: 6px;
+}
+.hud-caption .more[hidden] {
+  display: none;
+}
+.hud-caption .more summary {
+  display: inline-flex;
+  gap: 6px;
+  color: var(--color-muted);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+}
+.hud-caption .more summary::-webkit-details-marker {
+  display: none;
+}
+.hud-caption .more summary::before {
+  content: '+';
+}
+.hud-caption .more[open] summary::before {
+  content: '–';
+}
+.hud-caption .more summary:hover {
+  color: var(--color-text);
+}
+.hud-caption .more > div {
+  max-height: 26dvh;
+  margin-top: 6px;
+  overflow-y: auto;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+@media (max-width: 559px) {
+  .hud-caption {
+    width: 100%;
+    padding: 10px 12px 10px 14px;
+  }
+  .hud-caption .title {
+    margin-bottom: 3px;
+    font-size: 1.05rem;
+  }
+  .hud-caption .text {
+    font-size: 0.84rem;
+    line-height: 1.35;
+  }
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  background: none;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.icon-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.icon-btn[aria-pressed='true'] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #111;
+}
+.icon-btn .when-playing,
+.icon-btn[aria-pressed='true'] .when-idle {
+  display: none;
+}
+.icon-btn[aria-pressed='true'] .when-playing {
+  display: block;
+}
+
+/* --- dock: the scene's controls -------------------------------------------------------------- */
+.hud-dock {
+  grid-area: dock;
+  justify-self: center;
+  align-self: end;
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  max-width: 100%;
+  padding: 6px;
+  border-radius: 20px;
+}
+@media (min-width: 1000px) {
+  .hud-dock {
+    justify-self: end;
+  }
+}
+.hud-dock[hidden] {
+  display: none;
+}
+.dock-btn {
+  --tint: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 66px;
+  height: 58px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: none;
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s var(--ease-out), transform 0.2s var(--ease-out), border-color 0.2s ease;
+}
+.dock-btn svg {
+  width: 21px;
+  height: 21px;
+  color: var(--tint);
+}
+.dock-btn:hover:not(:disabled) {
+  background: var(--glass-bg-strong);
+  border-color: var(--tint);
+  transform: translateY(-2px);
+}
+.dock-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+.dock-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.dock-btn[data-kind='primary'] {
+  background: var(--color-accent);
+  color: #111;
+}
+.dock-btn[data-kind='primary'] svg {
+  color: #111;
+}
+.dock-btn[data-kind='primary']:hover:not(:disabled) {
+  background: var(--color-text);
+}
+.dock-sep {
+  width: 1px;
+  margin: 8px 2px;
+  background: var(--glass-border);
+}
+@media (max-width: 559px) {
+  .hud-dock {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 2px;
+    width: 100%;
+    padding: 4px;
+  }
+  .dock-btn {
+    min-width: 0;
+    height: 52px;
+    padding: 0 2px;
+    font-size: 0.6rem;
+    letter-spacing: 0.04em;
+  }
+  .dock-sep {
+    display: none;
+  }
+}
+
+/* --- 3D labels --------------------------------------------------------------------------- */
+.node-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-heading);
+  white-space: nowrap;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.9);
+  will-change: transform;
+}
+.node-label .t {
+  padding: 2px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.62);
+  backdrop-filter: blur(6px);
+  color: var(--color-text);
+  font-weight: 700;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.node-label .s {
+  color: var(--color-muted);
+  font-family: var(--hud-mono);
+  font-size: 0.66rem;
+}
+.node-label.leaked .t {
+  border-color: var(--hud-fault);
+  color: var(--hud-fault);
+}
+.node-label.dead .t {
+  color: var(--color-muted);
+  text-decoration: line-through;
+}
+.node-label.quiet .t {
+  padding: 0;
+  border-color: transparent;
+  background: none;
+  backdrop-filter: none;
+  color: var(--color-muted);
+  font-size: 0.68rem;
+}
+.node-label.tag .t {
+  background: var(--tint, var(--color-accent));
+  border-color: transparent;
+  color: #111;
+}
+@media (max-width: 559px) {
+  .node-label.quiet {
+    display: none;
+  }
+  .node-label .t {
+    padding: 1px 7px;
+    font-size: 0.64rem;
+  }
+  .node-label .s {
+    font-size: 0.58rem;
+  }
+}
+
+/* --- states ------------------------------------------------------------------------------- */
+.hud-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, transparent 25%, var(--hud-fault) 150%);
+}
+.hud-flash[data-tone='ok'] {
+  background: radial-gradient(circle at 50% 50%, transparent 25%, var(--hud-ok) 150%);
+}
+.hud-flash.on {
+  animation: hud-flash 0.9s ease-out;
+}
+@keyframes hud-flash {
+  0% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-loading,
+.hud-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  transition: opacity 0.6s var(--ease-out), visibility 0.6s;
+}
+.hud-loading .bar {
+  width: 120px;
+  height: 2px;
+  overflow: hidden;
+  background: var(--color-border);
+}
+.hud-loading .bar::after {
+  content: '';
+  display: block;
+  width: 40%;
+  height: 100%;
+  background: var(--color-accent);
+  animation: hud-load 1.1s var(--ease-out) infinite;
+}
+@keyframes hud-load {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(260%);
+  }
+}
+.hud-fallback {
+  display: none;
+  background: var(--color-bg);
+}
+.hud-fallback p {
+  max-width: 34ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 1rem;
+}
+[data-state='ready'] .hud-loading,
+[data-state='failed'] .hud-loading {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+[data-state='failed'] .hud-fallback {
+  display: grid;
+}
+[data-state='failed'] [data-hud] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bump,
+  .hud-flash.on,
+  .hud-loading .bar::after {
+    animation: none;
+  }
+}
+
+/* panels switched by Hud.tabs() */
+[data-panel][hidden] {
+  display: none !important;
+}

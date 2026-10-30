@@ -11,6 +11,7 @@ src/
   layouts/      page shells (BaseLayout)
   templates/    per-content-type page layouts, selected via frontmatter (see below)
   lib/          shared utilities — content queries, formatting, constants
+  scenes/       interactive full-screen scenes for `layout: fullscreen` posts (see below)
   content/      markdown content: portfolio/ and blog/ collections
   assets/       source images, optimized at build time
   pages/        routes (file-based) — stay thin: fetch data, pick a template, render it
@@ -39,6 +40,8 @@ free to point at a dedicated template again later if one project ever needs to d
 - `micro` — centered, large-type treatment for short posts, so a one-paragraph post doesn't
   look like an empty page
 - `embed` — media-first: a large YouTube/SoundCloud embed up top, text below
+- `fullscreen` — an interactive scene fills the viewport (no site chrome); the post's markdown
+  becomes the "About" sheet and the no-WebGL fallback. Needs `scene: <id>` in frontmatter
 
 Shared pieces used across templates live in `src/components/` (`ProjectLayout`, `ProjectMedia`,
 `ProjectMeta`, `ProjectNav`, `PostMeta`) so each template file stays focused on layout, not
@@ -50,6 +53,39 @@ Other frontmatter worth knowing:
   its own filter button on `/portfolio/`
 - blog posts with no `heroImage` render as text tiles in the `/blog/` masonry grid; tile height
   cycles through tall/square/wide for visual rhythm
+
+### Interactive scenes (`layout: fullscreen`)
+
+A fullscreen post renders a **scene**: a self-contained interactive piece (WebGL diorama + HUD) inside
+a shared stage. `src/templates/blog/FullscreenPost.astro` owns the shell (back link, About sheet, Focus
+view, Fullscreen toggle and the viewport grid); the scene fills the grid with its own HUD.
+
+```text
+src/scenes/
+  index.ts          registry: scene id -> component (the only file to touch to add a scene)
+  engine/           shared 3D + HUD kit, knows nothing about any one scene
+    world.ts          renderer, orbit camera, frame loop; frames the subject in the HUD's clear
+                      area; setPose() flies the camera anywhere (stage switches, "dive into a tile")
+    visuals.ts        NodeVisual / LinkVisual (holographic nodes, curved arrowed links)
+    effects.ts        packets along a path, particle bursts, ripples, halos
+    labels.ts         HTML labels pinned to 3D objects
+    palette.ts        reads `--scene-*` CSS tokens so CSS stays the colour source of truth
+    hud.ts, tour.ts   data-* driven HUD glue; cancellable scripted walkthroughs
+  ui/               Tabs / Caption / Dock components + hud.css (the shared HUD look)
+  arc-memory/       one scene: ArcMemoryScene.astro (HUD markup + tokens), main.ts (boot) and
+                    its own logic (arc-graph.ts is a pure reference-counting model)
+```
+
+To add a scene: create `src/scenes/<id>/` with a `<Id>Scene.astro` (compose `Tabs`, `Caption`, `Dock`,
+declare `--scene-*` colour tokens on its root, load `main.ts` with a dynamic `import()` so three.js
+stays out of every other page), register it in `src/scenes/index.ts`, then write a post with
+`layout: fullscreen` and `scene: <id>`. A scene's 3D parts implement `Stage` (a `Group`, an
+`update()` and a `pose()`), so they can be switched, reframed per screen shape and narrated the same way.
+HUD pieces tagged `data-hud` fade out in Focus view; the empty `[data-clear]` area is what the camera
+is framed against, so nothing ends up under a card.
+
+`three` is bundled by Vite and only downloaded on these pages. Scenes must stay usable without WebGL:
+`Hud.fail()` swaps in the written fallback.
 
 ### `src/lib/`
 
