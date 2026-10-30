@@ -1,4 +1,5 @@
 import ArcMemoryScene from './arc-memory/ArcMemoryScene.astro';
+import CoreMLScene from './coreml-dispatch/CoreMLScene.astro';
 
 /**
  * Interactive scenes available to `layout: fullscreen` blog posts.
@@ -7,6 +8,7 @@ import ArcMemoryScene from './arc-memory/ArcMemoryScene.astro';
  */
 export const scenes = {
   'arc-memory': ArcMemoryScene,
+  'coreml-dispatch': CoreMLScene,
 } as const;
 
 export type SceneId = keyof typeof scenes;

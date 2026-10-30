@@ -1,0 +1,420 @@
+---
+import Caption from '../ui/Caption.astro';
+import Dock from '../ui/Dock.astro';
+import Tabs from '../ui/Tabs.astro';
+import { OPS } from './model';
+
+const units = [
+  { id: 'all', label: '.all', short: 'All' },
+  { id: 'cpuAndGPU', label: '.cpuAndGPU', short: 'CPU+GPU' },
+  { id: 'cpuAndNeuralEngine', label: '.cpuAndNeuralEngine', short: 'CPU+ANE' },
+];
+const mini: Record<string, string> = { conv: 'Conv', norm: 'Norm', attn: 'Attn', matmul: 'MM', softmax: 'Soft' };
+const stats = [
+  { id: 'tops', label: 'Throughput', unit: 'TOPS', value: '7.2' },
+  { id: 'bandwidth', label: 'Fabric', unit: 'GB/s', value: '41' },
+  { id: 'latency', label: 'Latency', unit: 'ms', value: '1.12' },
+  { id: 'efficiency', label: 'Efficiency', unit: 'TOPS/W', value: '4.0' },
+];
+---
+
+<!--
+  Scene: where Core ML places a model across the SoC. Light, orange-accented theme taken from the cover art
+  reference. Markup is HUD only; the 3D lives in ./main.ts and loads after first paint.
+-->
+<div class="cml" data-scene="coreml-dispatch" data-state="loading">
+  <div class="canvas-host" data-canvas></div>
+  <div class="labels" data-labels></div>
+  <div class="hud-flash" data-flash></div>
+
+  <div class="hud-loading" role="status">
+    <span>Powering the die</span>
+    <span class="bar"></span>
+  </div>
+  <div class="hud-fallback">
+    <p>This scene needs WebGL and your browser couldn't start it. The write-up covers the whole story.</p>
+    <button class="btn" type="button" data-about-open>Read the write-up</button>
+  </div>
+  <noscript>
+    <style>
+      [data-scene='coreml-dispatch'] .hud-loading { display: none; }
+      [data-scene='coreml-dispatch'] .hud-fallback { display: grid; }
+    </style>
+  </noscript>
+
+  <Tabs tabs={units} numbered={false} />
+
+  <div class="hud-top" data-hud>
+    <div class="pipeline glass" role="group" aria-label="Model graph: tap an operation to break it">
+      <span class="endpoint">Input</span>
+      {OPS.map((op) => (
+        <>
+          <span class="hop" data-hop={op.id} data-switched="false"></span>
+          <button class="op" type="button" data-action="op" data-op={op.id} data-unit="ane" data-fault="none" data-active="false" title={`${op.name}: tap to cycle aligned → unaligned → unsupported`}>
+            <span class="dot"></span><span class="n"><span class="full">{op.short}</span><span class="mini">{mini[op.id]}</span></span><span class="u">ANE</span>
+          </button>
+        </>
+      ))}
+      <span class="hop" data-switched="false"></span>
+      <span class="endpoint">Output</span>
+    </div>
+    <dl class="stats glass" aria-label="Simulated telemetry">
+      {stats.map((s) => (
+        <div>
+          <dt>{s.label}</dt>
+          <dd><b data-readout={s.id}>{s.value}</b><small>{s.unit}</small></dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+
+  <Caption>
+    <Fragment slot="actions">
+      <button class="icon-btn" type="button" data-action="tour" aria-pressed="false" aria-label="Play the guided story" title="Play the guided story">
+        <svg class="when-idle" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" /></svg>
+        <svg class="when-playing" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /></svg>
+      </button>
+      <button class="icon-btn" type="button" data-action="reset" aria-label="Reset" title="Reset">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1M3.5 4v4.5H8" /></svg>
+      </button>
+    </Fragment>
+  </Caption>
+
+  <Dock group="cml">
+    <button class="dock-btn" type="button" data-action="cam-overview" data-radio="camera" data-value="overview" aria-pressed="true" title="Camera: overview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+      Overview
+    </button>
+    <button class="dock-btn" type="button" data-action="cam-ane" data-radio="camera" data-value="ane" aria-pressed="false" style="--tint: var(--scene-ane)" title="Camera: Neural Engine systolic array">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M9.3 4v16M14.7 4v16M4 9.3h16M4 14.7h16" /></svg>
+      ANE
+    </button>
+    <button class="dock-btn" type="button" data-action="cam-gpu" data-radio="camera" data-value="gpu" aria-pressed="false" style="--tint: #2a2a2a" title="Camera: GPU shader cores">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 6h14M5 10h14M5 14h14M5 18h14" /></svg>
+      GPU
+    </button>
+    <button class="dock-btn" type="button" data-action="cam-cpu" data-radio="camera" data-value="cpu" aria-pressed="false" style="--tint: #6f6f6f" title="Camera: CPU clusters and memory bus">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5" /><path d="M9.5 3v4M14.5 3v4M9.5 17v4M14.5 17v4M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4" /></svg>
+      CPU
+    </button>
+    <span class="dock-sep"></span>
+    <button class="dock-btn" type="button" data-action="xray" data-radio="xray" data-value="on" aria-pressed="false" style="--tint: var(--scene-ane)" title="Lift the heat spreader">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14l9 5 9-5M3 10l9 5 9-5-9-5z" /></svg>
+      X-ray
+    </button>
+    <button class="dock-btn" type="button" data-action="fault" data-radio="fault" data-value="on" aria-pressed="false" style="--tint: var(--scene-alert)" title="Break the Attention op: cycles aligned → unaligned → unsupported">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 16H3z" /><path d="M12 9v4M12 16.2v.1" /></svg>
+      Fault
+    </button>
+  </Dock>
+</div>
+
+<style is:global>
+  /* Tokens drawn from the cover reference: one peach-orange accent over neutral greys */
+  .cml {
+    --scene-ane: #f9a35a;
+    --scene-gpu: #f1efe9;
+    --scene-cpu: #8d8d8d;
+    --scene-alert: #e5482b;
+    --hud-ok: #4f8a63;
+    --hud-warn: #d98a3d;
+    --hud-fault: var(--scene-alert);
+    display: contents;
+  }
+  /* the whole stage takes the light theme */
+  .stage:has([data-scene='coreml-dispatch']) {
+    --stage-bg: #c9c9c9;
+    --hud-fg: #1f1f1f;
+    --hud-fg-muted: #5b5b5b;
+    --hud-accent: #f9a35a;
+    --hud-on-accent: #3b2412;
+    --hud-link: #a9540f;
+    --hud-surface: rgba(255, 255, 255, 0.56);
+    --hud-surface-strong: rgba(255, 255, 255, 0.86);
+    --hud-border: rgba(255, 255, 255, 0.8);
+    --hud-card: rgba(246, 246, 246, 0.92);
+    --hud-label-bg: rgba(255, 255, 255, 0.74);
+    --hud-label-border: rgba(0, 0, 0, 0.1);
+    --hud-text-shadow: 0 1px 8px rgba(255, 255, 255, 0.75);
+    --hud-vignette: rgba(0, 0, 0, 0.2);
+    --hud-title: #1f1f1f;
+  }
+  .stage:has([data-scene='coreml-dispatch']) .glass {
+    box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+  /* API names keep their camelCase */
+  .cml .seg-btn {
+    text-transform: none;
+    letter-spacing: 0.01em;
+    font-size: 0.95rem;
+  }
+  .cml .op .mini {
+    display: none;
+  }
+  /* unit labels: one frosted pill holding title and subtitle, readable over the dark board */
+  .cml .node-label.unit {
+    padding: 3px 11px 4px;
+    border: 1px solid var(--hud-label-border);
+    border-radius: 14px;
+    background: var(--hud-label-bg);
+    backdrop-filter: blur(6px);
+    box-shadow: inset 0 2px 0 var(--tint);
+  }
+  /* in the wide overview the three blocks are close together: titles only, subtitles once zoomed in */
+  .cml:not([data-preset]) .node-label.unit .s,
+  .cml[data-preset='overview'] .node-label.unit .s {
+    display: none;
+  }
+  .cml .node-label.unit .t {
+    padding: 0;
+    border: 0;
+    background: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  .cml .canvas-host {
+    background: linear-gradient(150deg, #9b9b9b 0%, #bcbcbc 38%, #dadada 100%);
+  }
+  /* mist along the bottom, as in the cover */
+  .cml .canvas-host::before {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 45%;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(238, 238, 238, 0.9), rgba(238, 238, 238, 0));
+  }
+
+  /* top block: model graph on the left, telemetry on the right */
+  .cml .hud-top {
+    grid-area: readout;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px 18px;
+    pointer-events: none;
+  }
+  .cml .pipeline {
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 6px;
+    border-radius: 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    pointer-events: auto;
+  }
+  .cml .pipeline::-webkit-scrollbar {
+    display: none;
+  }
+  .cml .endpoint {
+    padding: 0 8px;
+    color: var(--hud-fg-muted);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .cml .hop {
+    position: relative;
+    flex: none;
+    width: 20px;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.22);
+  }
+  .cml .hop[data-switched='true'] {
+    height: 3px;
+    background: var(--scene-alert);
+  }
+  .cml .hop[data-switched='true']::after {
+    content: '↯';
+    position: absolute;
+    left: 50%;
+    top: -15px;
+    transform: translateX(-50%);
+    color: var(--scene-alert);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .cml .op {
+    --c: var(--scene-ane);
+    position: relative;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 12px 0 10px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.055);
+    color: var(--hud-fg);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.25s var(--ease-out), border-color 0.25s ease, transform 0.25s var(--ease-out);
+  }
+  .cml .op[data-unit='gpu'] {
+    --c: var(--scene-gpu);
+  }
+  .cml .op[data-unit='cpu'] {
+    --c: var(--scene-cpu);
+  }
+  .cml .op .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+    transition: background 0.3s ease;
+  }
+  .cml .op .u {
+    color: var(--hud-fg-muted);
+    font-family: var(--hud-mono);
+    font-weight: 500;
+    font-size: 0.62rem;
+    letter-spacing: 0;
+  }
+  .cml .op:hover {
+    border-color: rgba(0, 0, 0, 0.25);
+  }
+  .cml .op[data-active='true'] {
+    background: var(--c);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.45);
+  }
+  .cml .op[data-active='true'] .dot {
+    background: var(--hud-on-accent);
+    box-shadow: none;
+  }
+  .cml .op[data-active='true'] .u {
+    color: var(--hud-on-accent);
+  }
+  .cml .op[data-fault='unaligned'] {
+    border: 1px dashed var(--scene-alert);
+  }
+  .cml .op[data-fault='unsupported'] {
+    border: 1px solid var(--scene-alert);
+    background: rgba(229, 72, 43, 0.14);
+  }
+  .cml .op[data-fault]:not([data-fault='none'])::after {
+    content: '!';
+    position: absolute;
+    top: -6px;
+    right: -3px;
+    display: grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--scene-alert);
+    color: #fff;
+    font-size: 0.66rem;
+    font-weight: 800;
+  }
+
+  .cml .stats {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 4px 20px;
+    margin: 0;
+    padding: 8px 16px;
+    border-radius: 18px;
+  }
+  .cml .stats dt {
+    color: var(--hud-fg-muted);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .cml .stats dd {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.3rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .cml .stats small {
+    margin-left: 3px;
+    color: var(--hud-fg-muted);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .cml[data-degraded='true'] .stats [data-readout='latency'],
+  .cml[data-degraded='true'] .stats [data-readout='efficiency'] {
+    color: var(--scene-alert);
+  }
+
+  @media (max-width: 559px) {
+    .cml .hud-top {
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cml .pipeline,
+    .cml .stats {
+      width: 100%;
+    }
+    .cml .pipeline {
+      justify-content: space-between;
+      padding: 5px 6px;
+    }
+    .cml .endpoint {
+      display: none;
+    }
+    .cml .hop {
+      width: 9px;
+    }
+    .cml .op {
+      gap: 5px;
+      height: 32px;
+      padding: 0 8px 0 7px;
+      font-size: 0.7rem;
+    }
+    .cml .op .u,
+    .cml .op .full,
+    .cml .node-label.unit .s {
+      display: none;
+    }
+    .cml .op .mini {
+      display: inline;
+    }
+    .cml .seg-btn {
+      font-size: 0.82rem;
+    }
+    .cml .stats {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px 8px;
+      padding: 6px 12px;
+    }
+    .cml .stats dd {
+      font-size: 1rem;
+    }
+    .cml .stats small {
+      display: block;
+      margin: 0;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-scene="coreml-dispatch"]');
+  if (root) {
+    // three.js and the scene code load after first paint, in their own chunk
+    import('./main')
+      .then(({ boot }) => boot(root))
+      .catch((error) => {
+        console.error(error);
+        root.dataset.state = 'failed';
+      });
+  }
+</script>
