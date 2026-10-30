@@ -56,8 +56,12 @@ export class Hud {
       if (notify) onChange(id);
     };
     buttons.forEach((b) => b.addEventListener('click', () => b.dataset.tab !== this.root.dataset.tab && select(b.dataset.tab!, true)));
+    this.selectTab = (id) => select(id, false);
     select(initial, false);
   }
+
+  /** Reflect a mode change made in code (e.g. by a guided story) in the tab UI. */
+  selectTab: (id: string) => void = () => {};
 
   say(msg: Message) {
     window.clearTimeout(this.swapTimer);
@@ -77,14 +81,15 @@ export class Hud {
     this.q(selector).textContent = value;
   }
 
-  /** Update a live value; numbers tick with a small bump so changes are noticed in peripheral vision. */
-  readout(name: string, value: string | number) {
+  /** Update a live value; by default it ticks with a small bump so changes are noticed in peripheral vision. */
+  readout(name: string, value: string | number, bump = true) {
     const el = this.root.querySelector<HTMLElement>(`[data-readout="${name}"]`);
     if (!el) return;
     const next = String(value);
     if (el.textContent === next) return;
     el.textContent = next;
     el.dataset.zero = String(next === '0' || next === '—');
+    if (!bump) return;
     el.classList.remove('bump');
     void el.offsetWidth; // restart the animation
     el.classList.add('bump');
@@ -103,6 +108,13 @@ export class Hud {
     this.root.querySelectorAll<HTMLElement>('[data-action="tour"]').forEach((b) => {
       b.setAttribute('aria-pressed', String(playing));
       b.setAttribute('aria-label', playing ? 'Stop the guided story' : 'Play the guided story');
+    });
+  }
+
+  /** Mark one button of a `[data-radio=group]` set as pressed (camera presets, option toggles). */
+  radio(group: string, value: string | null) {
+    this.root.querySelectorAll<HTMLElement>(`[data-radio="${group}"]`).forEach((b) => {
+      b.setAttribute('aria-pressed', String(b.dataset.value === value));
     });
   }
 

@@ -85,7 +85,8 @@ const { Content } = await render(post);
     gap: 10px;
     padding: 12px;
     overflow: hidden;
-    background: var(--color-bg);
+    background: var(--stage-bg, var(--color-bg));
+    color: var(--hud-fg, var(--color-text));
     /* the HUD opts back in per element; empty grid cells must never swallow drags on the canvas */
     pointer-events: none;
   }
@@ -143,7 +144,7 @@ const { Content } = await render(post);
     text-transform: uppercase;
   }
   .back:hover {
-    border-color: var(--color-accent);
+    border-color: var(--hud-accent, var(--color-accent));
   }
 
   .tools {
@@ -159,18 +160,18 @@ const { Content } = await render(post);
     place-items: center;
     padding: 0;
     border-radius: 50%;
-    color: var(--color-text);
+    color: var(--hud-fg, var(--color-text));
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
   }
   .tool:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+    color: var(--hud-accent, var(--color-accent));
+    border-color: var(--hud-accent, var(--color-accent));
   }
   .tool[aria-pressed='true'] {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: #111;
+    background: var(--hud-accent, var(--color-accent));
+    border-color: var(--hud-accent, var(--color-accent));
+    color: var(--hud-on-accent, #111);
   }
 
   /* Phones: icon-only back button and no fullscreen toggle (browsers already hide their chrome) */
@@ -207,7 +208,7 @@ const { Content } = await render(post);
     padding: 0;
     border: none;
     background: transparent;
-    color: var(--color-text);
+    color: var(--hud-fg, var(--color-text));
     overflow: visible;
   }
   .about::backdrop {
@@ -220,7 +221,13 @@ const { Content } = await render(post);
     overflow-y: auto;
     padding: 32px 28px 28px;
     border-radius: var(--radius-glass);
-    background: rgba(24, 24, 24, 0.82);
+    background: var(--hud-card, rgba(24, 24, 24, 0.82));
+  }
+  .about-card :global(.muted) {
+    color: var(--hud-fg-muted, var(--color-muted));
+  }
+  .about-card :global(.content a:not(.lightbox-img)) {
+    color: var(--hud-link, var(--color-accent));
   }
   .about-card h1 {
     font-size: clamp(1.7rem, 5vw, 2.4rem);
@@ -236,15 +243,15 @@ const { Content } = await render(post);
     display: grid;
     place-items: center;
     background: none;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--hud-border, var(--color-border));
     border-radius: 50%;
-    color: var(--color-text);
+    color: var(--hud-fg, var(--color-text));
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease;
   }
   .about-close:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+    color: var(--hud-accent, var(--color-accent));
+    border-color: var(--hud-accent, var(--color-accent));
   }
   .tags {
     text-transform: uppercase;
@@ -262,7 +269,8 @@ const { Content } = await render(post);
     const fsBtn = stage.querySelector<HTMLButtonElement>('[data-fullscreen-toggle]');
 
     // About sheet: the post's markdown, also the no-JS / no-WebGL reading of the piece
-    stage.querySelector('[data-about-open]')?.addEventListener('click', () => about?.showModal());
+    // every opener: the toolbar button and, when WebGL fails, the fallback's "Read the write-up"
+    stage.querySelectorAll('[data-about-open]').forEach((btn) => btn.addEventListener('click', () => about?.showModal()));
     stage.querySelector('[data-about-close]')?.addEventListener('click', () => about?.close());
     about?.addEventListener('click', (e) => {
       if (e.target === about) about.close(); // click on the backdrop

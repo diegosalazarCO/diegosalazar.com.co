@@ -74,6 +74,8 @@ src/scenes/
   ui/               Tabs / Caption / Dock components + hud.css (the shared HUD look)
   arc-memory/       one scene: ArcMemoryScene.astro (HUD markup + tokens), main.ts (boot) and
                     its own logic (arc-graph.ts is a pure reference-counting model)
+  coreml-dispatch/  another: a light-themed SoC diorama driven by model.ts, a pure model of how Core ML
+                    places ops on the Neural Engine / GPU / CPU (procedural textures, no image assets)
 ```
 
 To add a scene: create `src/scenes/<id>/` with a `<Id>Scene.astro` (compose `Tabs`, `Caption`, `Dock`,
@@ -81,7 +83,9 @@ declare `--scene-*` colour tokens on its root, load `main.ts` with a dynamic `im
 stays out of every other page), register it in `src/scenes/index.ts`, then write a post with
 `layout: fullscreen` and `scene: <id>`. A scene's 3D parts implement `Stage` (a `Group`, an
 `update()` and a `pose()`), so they can be switched, reframed per screen shape and narrated the same way.
-HUD pieces tagged `data-hud` fade out in Focus view; the empty `[data-clear]` area is what the camera
+A scene can re-theme the whole stage (HUD, labels, shell) by overriding the `--hud-*` tokens in `ui/hud.css`
+on `.stage:has([data-scene='<id>'])`; `coreml-dispatch` does this for a light, orange-accented look, and passes
+`background: null` to `World` so its backdrop is plain CSS. HUD pieces tagged `data-hud` fade out in Focus view; the empty `[data-clear]` area is what the camera
 is framed against, so nothing ends up under a card.
 
 `three` is bundled by Vite and only downloaded on these pages. Scenes must stay usable without WebGL:
