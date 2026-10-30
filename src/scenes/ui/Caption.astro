@@ -1,0 +1,20 @@
+---
+import './hud.css';
+---
+
+<!--
+  The narrator. Scenes push beats into it with Hud.say(); optional `actions` slot holds small icon
+  buttons (guided story, reset) in the card header.
+-->
+<section class="hud-caption glass" data-hud data-caption data-tone="info" aria-live="polite">
+  <header>
+    <span class="kicker" data-caption-kicker></span>
+    <div class="actions"><slot name="actions" /></div>
+  </header>
+  <h2 class="title" data-caption-title></h2>
+  <p class="text" data-caption-text></p>
+  <details class="more" data-caption-more hidden>
+    <summary>Under the hood</summary>
+    <div data-caption-detail></div>
+  </details>
+</section>
