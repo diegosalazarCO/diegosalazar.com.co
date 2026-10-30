@@ -5,7 +5,7 @@ import { LinkVisual, NodeVisual } from '../engine/visuals';
 import type { Shape } from '../engine/visuals';
 import type { Pose, Stage, World } from '../engine/world';
 import { ArcGraph } from './arc-graph';
-import type { GraphEdge, GraphNode } from './arc-graph';
+import type { GraphNode } from './arc-graph';
 import * as copy from './copy';
 import type { ArcPalette } from './theme';
 
