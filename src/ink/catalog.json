@@ -1,0 +1,31 @@
+{
+  "$comment": "Source of truth for the /ink/ flight. `src` is relative to the art repo root. Order here is the order you fly through. After editing, run tools/plates/build_plates.py. An entry whose file is not in the art repo yet is skipped with a warning.",
+  "plates": [
+    {"id": "lucky-sheet", "src": "assets/selects/favourites/diegosalazarco_httpss.mj.runSpRq1KGwnNM_Character_reference_s_74171194-9a45-4513-984c-44ebdaa479c5_1.png", "act": "paper", "title": "Lucky", "note": "Model sheet. Five views, and the ringed tail is the only striped part of him."},
+    {"id": "lucky-scratch", "src": "assets/selects/favourites/8d054a49-f2a6-4d9e-8bd5-e31eb5816347.jpeg", "act": "paper", "title": "Scratchboard", "note": "White cut out of solid black, and two red marks."},
+    {"id": "troya-sheet", "src": "assets/selects/favourites/diegosalazarco_httpss.mj.runHBMwoEQcGL8_httpss.mj.runHAG11X_A_b7d059e2-105d-4629-8cae-9e1933038d57_0.png", "act": "paper", "title": "Troya", "note": "Model sheet. Dark face, white gloves, a tail that keeps going."},
+    {"id": "troya-three", "src": "assets/selects/favourites/diegosalazarco_httpss.mj.runHBMwoEQcGL8_httpss.mj.runHAG11X_A_e9fc479c-17c5-418c-a136-58eb3ab22310_0.png", "act": "paper", "title": "Three views", "note": "Front, startled, and the back of her head."},
+    {"id": "troya-black", "src": "assets/selects/favourites/troya-ink-black-2d5fd39c_1.png", "act": "paper", "title": "Pin-up", "note": "Off-model on purpose: solid black body, one red square."},
+    {"id": "troya-red", "src": "assets/selects/bone-ink/troya-red-panel.webp", "act": "paper", "title": "Red block", "note": "Scratchboard fur. The red is an object, never the light."},
+    {"id": "troya-wide", "src": "assets/selects/favourites/Gemini_Generated_Image_sh0z34sh0z34sh0z.jpeg", "act": "paper", "title": "Wide", "note": "Her stare across a whole spread, one red stroke at the edge."},
+    {"id": "frontal-face", "src": "assets/selects/style/ink-04-frontal-face.png", "act": "paper", "title": "Both eyes", "note": "The seal dot bottom right arrived unprompted."},
+    {"id": "profile-eye", "src": "assets/selects/style/ink-02-profile-eye.png", "act": "paper", "title": "One eye", "note": "Torn paper edge, red blot. The purest line in the set."},
+    {"id": "fork-bowl-eyes", "src": "assets/selects/style/ink-01-fork-bowl-eyes.png", "act": "paper", "title": "The bowl", "note": "Eyes in the black above, fork and bowl on bone paper below."},
+    {"id": "fork-bowl-red", "src": "assets/selects/style/ink-03-fork-bowl-red.png", "act": "paper", "title": "Fork, bowl, red", "note": "The heaviest engraving texture of the ink tests."},
+    {"id": "light-shaft", "src": "assets/selects/style/ink-05-light-shaft.png", "act": "paper", "title": "Light shaft", "note": "A diagonal of light and one long fork shadow."},
+    {"id": "red-iris", "src": "assets/selects/style/ink-06-red-iris.png", "act": "paper", "title": "Red iris", "note": "Louder than an accent. Kept as a reference, not a page."},
+    {"id": "portrait", "src": "assets/selects/favourites/diegosalazarco_make_the_man_Lucky_in_the_style_gekiga_manga_i_bb4a830f-af1b-451d-94f1-ceb9d2607db5_2.png", "act": "paper", "title": "Portrait study", "note": "The same engraving line, pointed at a person."},
+    {"id": "seaside", "src": "assets/selects/favourites/diegosalazarco_make_the_woman_photography_in_Malta_in_the_sty_60d6dcdc-63f5-4057-a382-0c3958827183_3.png", "act": "paper", "title": "By the sea", "note": "Rocks, water, a few birds. The line holds outdoors too."},
+    {"id": "doorway", "src": "assets/selects/style/retro-02-doorway.png", "act": "night", "title": "Doorway", "note": "Near-black frame, one shaft of light, a small cat inside it."},
+    {"id": "light-wedge", "src": "assets/selects/style/retro-01-light-wedge.png", "act": "night", "title": "Light wedge", "note": "Flat dark wall, a hard wedge of bone light, one red dot."},
+    {"id": "lamp-red", "src": "assets/selects/style/retro-06-lamp-red.png", "act": "night", "title": "Lamp", "note": "The red accent as a deliberate object on the nightstand."},
+    {"id": "troya-dark-room", "src": "assets/selects/favourites/troya-lit-dark-room-0941d9b4_3.png", "act": "night", "title": "Her best likeness", "note": "Dark face, off-centre mouth mark, white gloves."},
+    {"id": "paw-bowl", "src": "assets/selects/favourites/lucky-paw-bowl-5bd3d923_3.png", "act": "night", "title": "The last kibble", "note": "Chapter one's gesture: his paw over the bowl."},
+    {"id": "paw-watched", "src": "assets/selects/style/retro-05-paw-watched.png", "act": "night", "title": "Paw in hand", "note": "A white paw in a hand, a face watching from the shadow above."},
+    {"id": "two-pressed", "src": "assets/selects/style/retro-03-two-pressed.png", "act": "night", "title": "Pressed together", "note": "Warm wedge on the wall, grey-blue bedding."},
+    {"id": "pair-ledge", "src": "assets/selects/favourites/pair-ledge-18ca9f74_0.png", "act": "night", "title": "The ledge", "note": "Troya upright, Lucky loafed, red specks on the wall."},
+    {"id": "pair-sofa", "src": "assets/selects/favourites/pair-sofa-979347d6_3.png", "act": "night", "title": "The watch", "note": "The pair on a sofa at night. The lazy one is the one awake."},
+    {"id": "night-pair", "src": "assets/selects/style/retro-09-night-pair.png", "act": "night", "title": "Night palette", "note": "The same pair in teal, with drawn panel borders."},
+    {"id": "asleep", "src": "assets/selects/style/retro-07-asleep.png", "act": "night", "title": "Asleep", "note": "Closed-eye curves, pink toe beans. The house is quiet."}
+  ]
+}

@@ -3,6 +3,7 @@ const navItems = [
   { href: '/portfolio/', label: 'Work' },
   { href: '/blog/', label: 'Writing' },
   { href: '/shop/', label: 'Prints' },
+  { href: '/ink/', label: 'Ink' },
 ];
 const current = Astro.url.pathname;
 const isActive = (href: string) => current.startsWith(href) || (href === '/portfolio/' && current.startsWith('/portfolio-item/'));

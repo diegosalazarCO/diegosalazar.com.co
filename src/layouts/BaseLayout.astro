@@ -11,8 +11,12 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
-  /** Page owns the whole viewport (fullscreen posts): no header, footer or floating widgets. */
-  immersive?: boolean;
+  /**
+   * The page brings its own chrome: no header, footer, backdrop or floating widgets.
+   * `true` also locks the viewport (fullscreen posts); `'scroll'` leaves the document scrolling
+   * (the ink flight is driven by it).
+   */
+  immersive?: boolean | 'scroll';
 }
 
 const {
@@ -37,7 +41,7 @@ const {
     <title>{title} — Diego Alexander Salazar</title>
     <meta name="description" content={description} />
   </head>
-  <body class:list={{ immersive }}>
+  <body class:list={{ immersive: immersive === true }}>
     {immersive ? (
       <main>
         <slot />
