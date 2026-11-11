@@ -13,6 +13,11 @@ const { Content } = await render(post);
 ---
 
 <article class="post">
+  <div class="section-head">
+    <span class="label">00</span>
+    <span class="label">Writing</span>
+    <a class="label link-underline" href="/blog/">Index</a>
+  </div>
   <h1>{title}</h1>
   <PostMeta date={date} categories={categories} />
 
@@ -38,8 +43,12 @@ const { Content } = await render(post);
 
 <style>
   .post {
-    padding: 48px 0;
+    padding: clamp(40px, 7vw, 96px) 0 64px;
     max-width: 680px;
+  }
+  h1 {
+    font-size: clamp(2rem, 4.2vw, 3.2rem);
+    margin-bottom: 20px;
   }
   .content {
     margin: 32px 0;

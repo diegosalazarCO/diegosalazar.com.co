@@ -1,0 +1,21 @@
+---
+/** Title block for index and detail pages: the section row, then the display title. */
+interface Props {
+  title: string;
+  label: string;
+  aside?: string;
+  lede?: string;
+}
+const { title, label, aside, lede } = Astro.props;
+---
+
+<header class="page-head">
+  <div class="section-head">
+    <span class="label">00</span>
+    <span class="label">{label}</span>
+    {aside && <span class="label">{aside}</span>}
+  </div>
+  <h1>{title}</h1>
+  {lede && <p class="lede">{lede}</p>}
+  <slot />
+</header>

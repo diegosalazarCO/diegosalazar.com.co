@@ -1,74 +1,57 @@
 ---
-import { mailto } from '../lib/constants';
+import { CONTACT_EMAIL, mailto } from '../lib/constants';
 import ClientsMarquee from './ClientsMarquee.astro';
+import Section from './Section.astro';
 
 const links = [
-  { href: '/', label: 'Home' },
-  { href: '/blog/', label: 'Blog' },
-  { href: '/shop/', label: 'Shop' },
-  { href: mailto(), label: 'Contact Me' },
+  { href: '/portfolio/', label: 'Work' },
+  { href: '/blog/', label: 'Writing' },
+  { href: '/shop/', label: 'Prints' },
 ];
 ---
 
 <footer class="site-footer">
-  <div class="wrap clients">
-    <p class="eyebrow muted">Companies I've worked with</p>
-    <ClientsMarquee />
-  </div>
+  <div class="wrap">
+    <Section index="→" label="Worked with">
+      <ClientsMarquee />
+    </Section>
 
-  <div class="wrap bottom">
-    <p class="brand">Diego Alexander Salazar</p>
-    <nav class="links">
-      {links.map((link) => (
-        <a href={link.href} class="split-text">
-          <span class="line">{link.label}</span>
-          <span class="line line-in" aria-hidden="true">{link.label}</span>
-        </a>
-      ))}
-    </nav>
+    <Section index="→" label="Contact">
+      <a class="mail" href={mailto()}>{CONTACT_EMAIL}</a>
+    </Section>
+
+    <div class="base">
+      <p class="label">© {new Date().getFullYear()} Diego Alexander Salazar</p>
+      <nav class="links" aria-label="Footer">
+        {links.map((link) => (
+          <a href={link.href} class="label link-underline">{link.label}</a>
+        ))}
+      </nav>
+    </div>
   </div>
 </footer>
 
 <style>
-  .site-footer {
-    margin-top: 64px;
+  .site-footer :global(.section) {
+    padding-bottom: clamp(48px, 7vw, 96px);
   }
-  .clients {
-    padding: 32px 0;
+  .mail {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 4.2vw, 3.4rem);
+    line-height: 1;
+    overflow-wrap: anywhere;
   }
-  .eyebrow {
-    text-align: center;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    margin: 0 0 20px;
-  }
-  .bottom {
-    text-align: center;
+  .base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 32px;
     border-top: 1px solid var(--color-border);
-    padding: 40px 0 100px;
-  }
-  .brand {
-    font-family: var(--font-heading);
-    font-weight: 300;
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
-    font-size: clamp(1.4rem, 4vw, 2rem);
-    color: var(--color-muted);
-    opacity: 0.5;
-    margin: 0 0 24px;
+    padding: 14px 0 96px;
   }
   .links {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px 32px;
-  }
-  .links a {
-    font-family: var(--font-heading);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    font-size: 0.9rem;
+    gap: 28px;
   }
 </style>

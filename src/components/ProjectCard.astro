@@ -17,9 +17,9 @@ const categorySlugs = categoryParts.map((c) => c.toLowerCase()).join(' ');
   <div class="frame">
     <Image src={cardImage} alt={title} width={Math.min(cardImage.width, 640)} />
   </div>
-  <div class="info glass">
+  <div class="info">
     <h3>{title}</h3>
-    <p class="muted category">{categoryParts.join(' / ')}</p>
+    <p class="label">{categoryParts.join(' / ')}</p>
   </div>
 </a>
 
@@ -27,16 +27,14 @@ const categorySlugs = categoryParts.map((c) => c.toLowerCase()).join(' ');
   .card {
     display: block;
     break-inside: avoid;
-    margin-bottom: 24px;
-    border-radius: var(--radius-glass);
-    overflow: hidden;
+    margin-bottom: 32px;
   }
   .card.is-hidden {
     display: none;
   }
   .frame {
     overflow: hidden;
-    background: #000;
+    background: var(--color-surface);
   }
   .frame img {
     display: block;
@@ -48,16 +46,18 @@ const categorySlugs = categoryParts.map((c) => c.toLowerCase()).join(' ');
     transform: scale(1.05);
   }
   .info {
-    padding: 14px 18px 16px;
-    border-top: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 12px 0 0;
   }
   .card h3 {
-    margin: 0 0 4px;
+    margin: 0;
     font-size: 1.05rem;
+    letter-spacing: -0.01em;
   }
-  .category {
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
+  .card:hover h3 {
+    color: var(--color-accent);
   }
 </style>

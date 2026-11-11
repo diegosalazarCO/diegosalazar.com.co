@@ -1,6 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
+import still from '../assets/backdrop/still.jpg';
 import { formatDate } from '../lib/format';
 import { excerpt, isSoundcloud, youtubeThumbnail } from '../lib/embed';
 
@@ -13,6 +15,12 @@ const { post, aspect = 'square' } = Astro.props;
 const { title, date, categories, heroImage, embedUrl, audioUrl, videoUrl, source, layout } = post.data;
 const isInteractive = layout === 'fullscreen';
 const href = `/blog/${post.id}/`;
+
+// Posts with no image get a placeholder cut from the hero film: a halftone crop, placed by a
+// hash of the post id so every tile shows a different part of the frame and never changes.
+const placeholder = heroImage ? null : await getImage({ src: still, width: 640 });
+const hash = [...post.id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+const crop = `--ph: url(${placeholder?.src}); --ph-x: ${hash % 101}%; --ph-y: ${(hash >> 8) % 101}%`;
 const hasMedia = Boolean(embedUrl || audioUrl || videoUrl);
 const videoThumb = youtubeThumbnail(embedUrl);
 const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' : videoThumb ? 'video' : 'default';
@@ -39,7 +47,7 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
   {kind === 'default' && (
     <a
       class={`media ${heroImage ? (isInteractive ? 'natural' : aspect) : `text-only ${aspect}`}`}
-      style={isInteractive && heroImage ? `aspect-ratio: ${heroImage.width} / ${heroImage.height}` : undefined}
+      style={heroImage ? (isInteractive ? `aspect-ratio: ${heroImage.width} / ${heroImage.height}` : undefined) : crop}
       href={href}
       tabindex="-1"
       aria-hidden="true"
@@ -68,7 +76,7 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
   )}
   <div class="info">
     <h3><a href={href}>{title}</a></h3>
-    <p class="muted">
+    <p class="label">
       {formatDate(date)}
       {categories.length > 0 && <span> · {categories.join(', ')}</span>}
     </p>
@@ -88,7 +96,7 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
     display: block;
     position: relative;
     overflow: hidden;
-    background: var(--color-border);
+    background: var(--color-surface);
   }
   .media.tall {
     aspect-ratio: 3 / 4;
@@ -135,7 +143,7 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
     gap: 16px;
     min-height: 220px;
     padding: 20px;
-    background: linear-gradient(155deg, #1c1c1c, var(--color-bg));
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     transition: border-color 0.25s ease;
   }
@@ -143,10 +151,10 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
     border-color: var(--color-accent);
   }
   .tweet-source {
-    font-family: var(--font-heading);
-    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     color: var(--color-muted);
   }
   .tweet-text {
@@ -162,9 +170,30 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
     display: flex;
     align-items: flex-end;
     padding: 20px;
-    background: linear-gradient(155deg, #1c1c1c, var(--color-bg));
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     transition: border-color 0.25s ease;
+  }
+  .text-only::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ph) var(--ph-x) var(--ph-y) / 320% auto no-repeat;
+    -webkit-mask: radial-gradient(circle, #000 1.3px, transparent 1.9px) 0 0 / 7px 7px,
+      linear-gradient(200deg, #000 20%, transparent 78%);
+    mask: radial-gradient(circle, #000 1.3px, transparent 1.9px) 0 0 / 7px 7px,
+      linear-gradient(200deg, #000 20%, transparent 78%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+    opacity: 0.8;
+    transition: opacity 0.4s var(--ease-out), transform 0.8s var(--ease-out);
+  }
+  .post:hover .text-only::before {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+  .text-only .tile-title {
+    position: relative;
   }
   .post:hover .text-only {
     border-color: var(--color-accent);
@@ -184,7 +213,6 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
     font-family: var(--font-heading);
     font-size: clamp(1.4rem, 3vw, 2rem);
     font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: -0.02em;
     line-height: 1.05;
   }
@@ -209,8 +237,6 @@ const kind = source === 'twitter' ? 'tweet' : isSoundcloud(embedUrl) ? 'audio' :
     font-size: 1.1rem;
   }
   .info p {
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    margin-top: 6px;
   }
 </style>

@@ -6,6 +6,11 @@ const { title } = Astro.props;
 ---
 
 <article class="project-layout">
+  <div class="section-head">
+    <span class="label">00</span>
+    <span class="label">Work</span>
+    <a class="label link-underline" href="/portfolio/">Index</a>
+  </div>
   <h1>{title}</h1>
 
   <div class="split">
@@ -20,10 +25,10 @@ const { title } = Astro.props;
 
 <style>
   .project-layout {
-    padding: 40px 0 48px;
+    padding: clamp(40px, 7vw, 96px) 0 48px;
   }
   h1 {
-    margin: 0 0 32px;
+    margin: 0 0 clamp(28px, 4vw, 56px);
   }
   .split {
     display: grid;
@@ -40,7 +45,7 @@ const { title } = Astro.props;
     }
     .desc-col {
       position: sticky;
-      top: 96px;
+      top: calc(var(--header-h) + 32px);
       max-width: none;
     }
   }

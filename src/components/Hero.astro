@@ -2,28 +2,41 @@
 interface Props {
   title: string;
   tagline: string;
+  /** Short facts shown as the mono strip along the bottom edge. */
+  facts?: string[];
 }
-const { title, tagline } = Astro.props;
+const { title, tagline, facts = [] } = Astro.props;
 ---
 
-<section class="hero full-bleed">
+<section class="hero full-bleed" id="hero">
+  <!-- Source for the WebGL backdrop (src/backdrop). Stays visible as the hero when WebGL is unavailable. -->
   <video class="hero-video" id="hero-video" src="/videos/hero.mp4" autoplay loop muted playsinline preload="auto"></video>
+
   <div class="hero-content wrap">
     <h1>{title}</h1>
-    <p>{tagline}</p>
+    <p class="tagline">{tagline}</p>
   </div>
-  <button class="video-toggle" id="video-toggle" aria-label="Pause background video">
-    <span class="icon-pause">❚❚</span>
-    <span class="icon-play">▶</span>
-  </button>
+
+  <div class="hero-foot wrap">
+    <button class="video-toggle label" id="video-toggle" aria-label="Pause background film">
+      <span class="icon-pause">Pause film</span>
+      <span class="icon-play">Play film</span>
+    </button>
+    <ul class="facts">
+      {facts.map((fact) => <li class="label">{fact}</li>)}
+    </ul>
+    <a class="label scroll-cue" href="#work">Scroll ↓</a>
+  </div>
 </section>
 
 <style>
   .hero {
     position: relative;
-    min-height: 92vh;
+    min-height: 100svh;
+    margin-top: calc(var(--header-h) * -1);
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: flex-end;
     overflow: hidden;
   }
   .hero-video {
@@ -33,8 +46,12 @@ const { title, tagline } = Astro.props;
     height: 100%;
     object-fit: cover;
     filter: brightness(0.55);
+    transition: opacity 0.8s var(--ease-out);
   }
-  /* On phones the crop is narrow: anchor it to the left edge of the video */
+  /* Once the backdrop is drawing the film, the plain element only feeds it */
+  :global(.has-backdrop) .hero-video {
+    opacity: 0;
+  }
   @media (max-width: 640px) {
     .hero-video {
       object-position: left center;
@@ -42,52 +59,70 @@ const { title, tagline } = Astro.props;
   }
   .hero-content {
     position: relative;
+    width: 100%;
+    padding-bottom: clamp(28px, 5vw, 56px);
   }
-  .hero-content h1 {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+  h1 {
+    font-size: clamp(2.4rem, 5.2vw, 4.6rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    margin: 0 0 clamp(14px, 1.6vw, 22px);
   }
-  .hero-content p {
-    max-width: 560px;
-    font-size: clamp(1.1rem, 2vw, 1.4rem);
-    font-weight: 300;
+  .tagline {
+    max-width: 44ch;
+    margin: 0;
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
   }
-  .video-toggle {
-    position: absolute;
-    bottom: 24px;
-    left: 24px;
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--color-text);
-    background: rgba(0, 0, 0, 0.5);
-    color: var(--color-text);
-    cursor: pointer;
+  .hero-foot {
+    position: relative;
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    transition: transform 0.25s var(--ease-out), border-color 0.25s ease;
+    justify-content: space-between;
+    gap: 24px;
+    padding-top: 14px;
+    padding-bottom: 18px;
   }
-  .video-toggle:hover {
-    transform: scale(1.1);
-    border-color: var(--color-accent);
+  .hero-foot::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: var(--gutter);
+    right: var(--gutter);
+    height: 1px;
+    background: var(--color-border);
+  }
+  .hero-foot .label {
+    color: var(--color-text);
+  }
+  .facts {
+    list-style: none;
+    display: flex;
+    gap: 32px;
+    margin: 0;
+    padding: 0;
+  }
+  .video-toggle {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .video-toggle:hover,
+  .scroll-cue:hover {
     color: var(--color-accent);
   }
-  .video-toggle .icon-play {
+  .video-toggle .icon-play,
+  .video-toggle.paused .icon-pause {
     display: none;
   }
   .video-toggle.paused .icon-play {
-    display: block;
+    display: inline;
   }
-  .video-toggle.paused .icon-pause {
-    display: none;
+  @media (max-width: 720px) {
+    .facts {
+      display: none;
+    }
   }
 </style>
 
@@ -114,9 +149,11 @@ const { title, tagline } = Astro.props;
     if (video.paused) {
       video.play();
       toggle.classList.remove('paused');
+      toggle.setAttribute('aria-label', 'Pause background film');
     } else {
       video.pause();
       toggle.classList.add('paused');
+      toggle.setAttribute('aria-label', 'Play background film');
     }
   });
 </script>
