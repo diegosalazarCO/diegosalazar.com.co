@@ -1,98 +1,98 @@
 ---
 const navItems = [
-  { href: '/', label: 'Home' },
-  { href: '/portfolio/', label: 'Portfolio' },
-  { href: '/blog/', label: 'Blog' },
-  { href: '/shop/', label: 'Shop' },
+  { href: '/portfolio/', label: 'Work' },
+  { href: '/blog/', label: 'Writing' },
+  { href: '/shop/', label: 'Prints' },
 ];
 const current = Astro.url.pathname;
+const isActive = (href: string) => current.startsWith(href) || (href === '/portfolio/' && current.startsWith('/portfolio-item/'));
 ---
 
 <header class="site-header" id="site-header">
   <div class="bar">
-    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="menu-panel">
-      <span></span>
-      <span></span>
-    </button>
-    <a href="/" class="brand">DIEGO</a>
+    <a href="/" class="brand" aria-label="Diego Alexander Salazar, home">DIEGO</a>
+    <nav class="nav" id="site-nav" aria-label="Primary">
+      {navItems.map((item) => (
+        <a href={item.href} class="label link-underline" aria-current={isActive(item.href) ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+    <button class="menu-toggle label" id="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
   </div>
-
-  <nav class="menu-panel" id="menu-panel">
-    {navItems.map((item) => (
-      <a href={item.href} class={current === item.href ? 'active' : ''}>
-        {item.label}
-      </a>
-    ))}
-  </nav>
 </header>
 
 <style>
   .site-header {
-    position: sticky;
-    top: 0;
+    position: fixed;
+    inset: 0 0 auto 0;
     z-index: 50;
+    border-bottom: 1px solid transparent;
+    transition: background 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+  }
+  .site-header.scrolled,
+  .site-header.open {
     background: var(--color-bg);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom-color: var(--color-border);
   }
   .bar {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    height: var(--header-h);
+    display: flex;
     align-items: center;
-    padding: 20px 24px;
+    justify-content: space-between;
   }
   .brand {
-    justify-self: center;
     font-family: var(--font-display);
-    font-size: 1.8rem;
-    letter-spacing: -0.04em;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .nav {
+    display: flex;
+    gap: 32px;
+  }
+  .nav a {
+    color: var(--color-text);
+  }
+  .nav a[aria-current='page'] {
+    color: var(--color-accent);
   }
   .menu-toggle {
-    justify-self: start;
+    display: none;
     background: none;
-    border: none;
+    border: 0;
+    padding: 12px 0 12px 12px;
+    color: var(--color-text);
     cursor: pointer;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
   }
-  .menu-toggle span {
-    display: block;
-    width: 26px;
-    height: 2px;
-    background: var(--color-text);
-    transition: transform 0.2s ease;
-  }
-  .menu-toggle[aria-expanded='true'] span:first-child {
-    transform: translateY(3.5px) rotate(45deg);
-  }
-  .menu-toggle[aria-expanded='true'] span:last-child {
-    transform: translateY(-3.5px) rotate(-45deg);
-  }
-  .menu-panel {
-    display: flex;
-    flex-direction: column;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-  .site-header.open .menu-panel {
-    max-height: 320px;
-  }
-  .menu-panel a {
-    padding: 14px 24px;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 1.1rem;
-    letter-spacing: 0.02em;
-    border-top: 1px solid var(--color-border);
-    transition: color 0.2s ease, padding-left 0.2s var(--ease-out);
-  }
-  .menu-panel a.active,
-  .menu-panel a:hover {
-    color: var(--color-accent);
-    padding-left: 32px;
+  @media (max-width: 640px) {
+    .menu-toggle {
+      display: block;
+    }
+    .nav {
+      position: absolute;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      gap: 0;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      display: none;
+    }
+    .site-header.open .nav {
+      display: flex;
+    }
+    .nav a {
+      padding: 16px var(--gutter);
+      border-top: 1px solid var(--color-border);
+    }
+    .nav a::after {
+      display: none;
+    }
   }
 </style>
 
@@ -100,7 +100,11 @@ const current = Astro.url.pathname;
   const header = document.getElementById('site-header');
   const toggle = document.getElementById('menu-toggle');
   toggle?.addEventListener('click', () => {
-    const isOpen = header?.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', String(Boolean(isOpen)));
+    const open = header?.classList.toggle('open') ?? false;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.textContent = open ? 'Close' : 'Menu';
   });
+  const onScroll = () => header?.classList.toggle('scrolled', window.scrollY > 24);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 </script>

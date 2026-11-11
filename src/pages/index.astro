@@ -1,37 +1,100 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
 import PortfolioTextList from '../components/PortfolioTextList.astro';
-import { getSortedProjects } from '../lib/content';
+import { getSortedPosts, getSortedProjects } from '../lib/content';
+import { formatDate } from '../lib/format';
 
 const projects = await getSortedProjects();
+const posts = (await getSortedPosts()).slice(0, 5);
 ---
 
 <BaseLayout title="Home">
   <Hero
     title="Diego Alexander"
-    tagline="Hi, I am a Tech creative and Product Developer specializing in iOS, AR, and AI products. I founded a fashion brand, and have worked in the Fintech world — bringing innovation to the industry."
+    tagline="Tech creative and product developer specializing in iOS, AR and AI products. I founded a fashion brand and have worked in the fintech world, bringing innovation to the industry."
+    facts={['iOS · AR · AI', 'Fashion · Photography', 'Fintech']}
   />
 
-  <PortfolioTextList projects={projects} />
+  <div class="home">
+    <Section index="01" label="Selected work" aside={`${projects.length} projects`} id="work">
+      <PortfolioTextList projects={projects} />
+      <p class="more"><a class="btn" href="/portfolio/">All work</a></p>
+    </Section>
 
-  <section class="about">
-    <h2>Tech &amp; Creativity</h2>
-    <p>
-      Join me on this digital journey as I showcase my passion for technology, photography, creativity, and
-      product development. Together, let's embark on a world where innovation knows no limits.
-    </p>
-    <p>
-      Feel free to explore my portfolio and get in touch to discuss how we can collaborate on exciting
-      creative and tech-driven projects.
-    </p>
-    <a class="btn" href="/portfolio/">Projects</a>
-  </section>
+    <Section index="02" label="About">
+      <div class="about" data-reveal>
+        <p class="statement">
+          Technology, photography, creativity and product development, shown as one practice.
+        </p>
+        <div class="body">
+          <p>
+            Join me on this digital journey as I showcase my passion for technology, photography, creativity, and
+            product development. Together, let's embark on a world where innovation knows no limits.
+          </p>
+          <p>
+            Feel free to explore my portfolio and get in touch to discuss how we can collaborate on exciting
+            creative and tech-driven projects.
+          </p>
+        </div>
+      </div>
+    </Section>
+
+    <Section index="03" label="Writing" aside="Latest">
+      <ul class="rows">
+        {posts.map((post) => (
+          <li data-reveal>
+            <a class="row" href={`/blog/${post.id}/`}>
+              <span class="label">{post.data.date.getFullYear()}</span>
+              <span class="row-title">{post.data.title}</span>
+              <span class="label row-aside">{formatDate(post.data.date)}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="more"><a class="btn" href="/blog/">All writing</a></p>
+    </Section>
+  </div>
 </BaseLayout>
 
 <style>
+  .home {
+    padding-top: clamp(72px, 10vw, 136px);
+  }
+  .more {
+    margin: 32px 0 0;
+  }
   .about {
-    max-width: 640px;
-    padding: 0 0 64px;
+    display: grid;
+    gap: 32px;
+  }
+  .statement {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: clamp(1.7rem, 3.6vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0;
+    max-width: 18ch;
+  }
+  .body {
+    max-width: 52ch;
+  }
+  .body p {
+    margin: 0 0 16px;
+  }
+  .rows .row-title {
+    font-size: clamp(1.15rem, 2.2vw, 1.7rem);
+  }
+  .rows .row:hover {
+    color: var(--color-accent);
+  }
+  @media (min-width: 900px) {
+    .about {
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      padding-left: calc(3.5rem + 16px);
+    }
   }
 </style>

@@ -11,6 +11,7 @@ src/
   layouts/      page shells (BaseLayout)
   templates/    per-content-type page layouts, selected via frontmatter (see below)
   lib/          shared utilities — content queries, formatting, constants
+  backdrop/     the site-wide WebGL backdrop (see below)
   scenes/       interactive full-screen scenes for `layout: fullscreen` posts (see below)
   content/      markdown content: portfolio/ and blog/ collections
   assets/       source images, optimized at build time
@@ -88,8 +89,27 @@ on `.stage:has([data-scene='<id>'])`; `coreml-dispatch` does this for a light, o
 `background: null` to `World` so its backdrop is plain CSS. HUD pieces tagged `data-hud` fade out in Focus view; the empty `[data-clear]` area is what the camera
 is framed against, so nothing ends up under a card.
 
-`three` is bundled by Vite and only downloaded on these pages. Scenes must stay usable without WebGL:
+`three` is bundled by Vite as a lazy chunk, shared with the site backdrop. Scenes must stay usable without WebGL:
 `Hud.fail()` swaps in the written fallback.
+
+### Section system
+
+Every block on every page opens the same way: a hairline, then a mono row of index / name / aside
+(`.section-head` in `src/styles/global.css`). Use `components/Section.astro` for a block and
+`components/PageHeader.astro` for a page title; lists use `.rows` / `.row`. Small metadata is always
+`.label` (mono, uppercase). Keep new pages on these primitives so the site stays one system.
+
+### Backdrop (`src/backdrop/`)
+
+A fixed three.js canvas behind every non-immersive page, generated from the hero film
+(`public/videos/hero.mp4`). On the homepage the playing `<video>` is the texture: it is drawn as a
+relief (vertices pushed in depth by a blurred luminance map) that tilts with the pointer, and as
+you scroll past the hero it dissolves into a sparse field of points that keep the film's colours.
+Other pages show only the point field, sampled from `src/assets/backdrop/still.jpg` (a frame of the
+film; regenerate it with `ffmpeg -ss 2 -i public/videos/hero.mp4 -frames:v 1 -vf scale=960:-1 …` if
+the film changes). three.js is loaded with a dynamic `import()` after the page is readable, and the
+backdrop is skipped for `prefers-reduced-motion`, Save-Data, or no WebGL, where the hero falls back
+to the plain video.
 
 ### `src/lib/`
 

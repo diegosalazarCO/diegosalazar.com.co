@@ -1,0 +1,19 @@
+---
+/** One block of a page. Every section opens with the same hairline + mono row (see global.css). */
+interface Props {
+  index: string;
+  label: string;
+  aside?: string;
+  id?: string;
+}
+const { index, label, aside, id } = Astro.props;
+---
+
+<section class="section" id={id}>
+  <header class="section-head" data-reveal>
+    <span class="label">{index}</span>
+    <h2 class="label">{label}</h2>
+    {aside && <span class="label">{aside}</span>}
+  </header>
+  <slot />
+</section>

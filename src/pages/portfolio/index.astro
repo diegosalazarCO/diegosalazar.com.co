@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { getSortedProjects } from '../../lib/content';
 
@@ -8,7 +9,7 @@ const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCa
 ---
 
 <BaseLayout title="Portfolio">
-  <h1>Portfolio</h1>
+  <PageHeader title="Work" label="Index" aside={`${projects.length} projects`} />
 
   <div class="filter" id="filter">
     <span class="filter-indicator" id="filter-indicator"></span>
@@ -26,9 +27,6 @@ const categories = [...new Set(projects.flatMap((p) => p.data.category.toLowerCa
 </BaseLayout>
 
 <style>
-  h1 {
-    font-size: clamp(2rem, 6vw, 3rem);
-  }
   .grid {
     columns: 1;
     column-gap: 24px;

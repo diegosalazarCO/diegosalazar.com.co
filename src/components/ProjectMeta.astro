@@ -41,12 +41,17 @@ const { client, role, category, date, tags } = Astro.props;
     display: grid;
     grid-template-columns: 120px 1fr;
     gap: 8px 16px;
-    margin: 32px 0;
-    max-width: 480px;
+    margin: 48px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-border);
+    max-width: 640px;
   }
   .meta dt {
+    font-family: var(--font-mono);
     text-transform: uppercase;
-    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    font-size: 0.68rem;
+    line-height: 1.8rem;
     color: var(--color-muted);
   }
 </style>

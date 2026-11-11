@@ -1,19 +1,23 @@
 :root {
-  --color-bg: #111111;
-  --color-text: #fefefe;
-  --color-muted: #9a9a9a;
+  --color-bg: #0b0b0c;
+  --color-text: #f3f0ea;
+  --color-muted: #8d8a85;
   --color-accent: #f2978c;
-  --color-border: #2a2a2a;
+  --color-border: rgba(243, 240, 234, 0.14);
+  --color-surface: #141415;
   --font-display: 'Anton', sans-serif;
   --font-heading: 'Rajdhani', sans-serif;
   --font-body: 'Roboto Condensed', Helvetica, Arial, sans-serif;
-  --max-width: 1100px;
+  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+  --max-width: 1280px;
+  --gutter: clamp(20px, 4vw, 48px);
+  --header-h: 64px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --glass-bg: rgba(255, 255, 255, 0.07);
-  --glass-bg-strong: rgba(255, 255, 255, 0.12);
-  --glass-border: rgba(255, 255, 255, 0.14);
-  --glass-blur: blur(20px) saturate(160%);
-  --radius-glass: 18px;
+  /* legacy names, kept so older components resolve: flat hairline chips, no blur */
+  --glass-bg: rgba(11, 11, 12, 0.82);
+  --glass-bg-strong: rgba(11, 11, 12, 0.94);
+  --glass-border: var(--color-border);
+  --radius-glass: 0px;
 }
 
 * {
@@ -29,6 +33,25 @@ body {
   font-weight: 300;
   font-size: 18px;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Page chrome sits above the fixed WebGL backdrop (src/backdrop) */
+body > header,
+body > main,
+body > footer {
+  position: relative;
+  z-index: 1;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #111;
+}
+
+:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 3px;
 }
 
 img,
@@ -53,15 +76,113 @@ h3,
 h4 {
   font-family: var(--font-heading);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: -0.03em;
+  /* titles keep their authored casing (PROVOK AI Magazine), first letters raised */
+  text-transform: capitalize;
+  letter-spacing: -0.02em;
   line-height: 1.05;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  font-size: clamp(2.1rem, 4.6vw, 3.6rem);
+  margin: 0;
 }
 
 .wrap {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--gutter);
+}
+
+/* ---- The shared section system -------------------------------------------------
+   Every block on every page opens the same way: a hairline, then a mono row of
+   index / name / aside. Page titles use .page-head, which is the same row plus an h1. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  color: var(--color-muted);
+  margin: 0;
+}
+.section {
+  padding: 0 0 clamp(72px, 10vw, 136px);
+}
+.section-head {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr auto;
+  align-items: baseline;
+  gap: 16px;
+  border-top: 1px solid var(--color-border);
+  padding: 14px 0 clamp(28px, 4vw, 48px);
+}
+.section-head .label:nth-child(2) {
+  color: var(--color-text);
+}
+.page-head {
+  padding-top: clamp(40px, 7vw, 96px);
+}
+.page-head h1 {
+  margin: 0 0 clamp(28px, 4vw, 56px);
+}
+.page-head .lede {
+  max-width: 46ch;
+  margin: -12px 0 clamp(28px, 4vw, 56px);
+  color: var(--color-muted);
+}
+
+/* Index rows: work list, writing list, project nav */
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr auto;
+  align-items: baseline;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-border);
+  transition: color 0.25s var(--ease-out);
+}
+.row .row-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  transition: transform 0.35s var(--ease-out);
+}
+.row:hover .row-title,
+.row:focus-visible .row-title {
+  transform: translateX(10px);
+}
+.row .label {
+  transition: color 0.25s var(--ease-out);
+}
+.row:hover .label {
+  color: var(--color-text);
+}
+@media (max-width: 640px) {
+  .section-head,
+  .row {
+    grid-template-columns: 2.2rem 1fr auto;
+    gap: 10px;
+  }
+  .row .row-aside {
+    display: none;
+  }
+}
+
+.page {
+  padding-top: var(--header-h);
+  min-height: 70vh;
 }
 
 .full-bleed {
@@ -176,11 +297,11 @@ body.immersive {
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 700;
+    font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 /* Inverted button: filled light, hollows out on hover (homepage CTAs) */
@@ -189,12 +310,12 @@ body.immersive {
   background: var(--color-text);
   color: var(--color-bg);
   border: 1px solid var(--color-text);
-  font-family: var(--font-heading);
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.85rem;
-  padding: 14px 32px;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  padding: 14px 22px;
   cursor: pointer;
   transition: background 0.25s var(--ease-out), color 0.25s var(--ease-out);
 }
@@ -254,8 +375,8 @@ body.immersive {
   display: flex;
   gap: 10px;
   padding: 10px 0;
-  margin: 0 -24px;
-  padding-inline: 24px;
+  margin: 0 calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -263,14 +384,11 @@ body.immersive {
   display: none;
 }
 .filter-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 16px 0 0;
+  display: none;
 }
 .filter-indicator {
   position: absolute;
-  top: 10px;
+  top: 0;
   left: 0;
   height: 34px;
   width: 0;
@@ -281,11 +399,13 @@ body.immersive {
 .filter-btn {
   position: relative;
   flex: 0 0 auto;
-  font-family: var(--font-heading);
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  font-size: 0.66rem;
+  line-height: 16px;
+  height: 34px;
   background: none;
   border: 1px solid var(--color-border);
   color: var(--color-muted);
@@ -308,9 +428,5 @@ body.immersive {
     margin: 0;
     padding-inline: 0;
     gap: 12px;
-  }
-  .filter-btn {
-    font-size: 0.85rem;
-    padding: 8px 18px;
   }
 }

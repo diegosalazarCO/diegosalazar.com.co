@@ -26,7 +26,8 @@ const { prev, next } = Astro.props;
     flex-direction: column;
     gap: 16px;
     margin-top: 48px;
-    padding-top: 24px;
+    padding-top: 14px;
+    padding-bottom: 64px;
     border-top: 1px solid var(--color-border);
   }
   .project-nav a {
@@ -42,7 +43,8 @@ const { prev, next } = Astro.props;
     text-align: right;
   }
   .label {
-    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -50,11 +52,12 @@ const { prev, next } = Astro.props;
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 1.3rem;
-    text-transform: uppercase;
+    text-transform: capitalize;
     white-space: nowrap;
   }
   .all {
-    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--color-muted);

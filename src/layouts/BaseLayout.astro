@@ -5,6 +5,7 @@ import BackToTop from '../components/BackToTop.astro';
 import MusicToggle from '../components/MusicToggle.astro';
 import Lightbox from '../components/Lightbox.astro';
 import ScrollReveal from '../components/ScrollReveal.astro';
+import Backdrop from '../backdrop/Backdrop.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -43,8 +44,9 @@ const {
       </main>
     ) : (
       <>
+        <Backdrop />
         <Header />
-        <main class="wrap">
+        <main class="wrap page">
           <slot />
         </main>
         <Footer />

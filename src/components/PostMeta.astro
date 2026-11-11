@@ -8,7 +8,7 @@ interface Props {
 const { date, categories } = Astro.props;
 ---
 
-<p class="muted post-meta">
+<p class="label post-meta">
   {formatDate(date)}
   {categories.length > 0 && <span> · {categories.join(', ')}</span>}
 </p>

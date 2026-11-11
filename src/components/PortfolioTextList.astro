@@ -14,14 +14,19 @@ const previews = await Promise.all(
     return { id: project.id, title: project.data.title, src: img.src };
   })
 );
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<section class="text-list" id="text-list">
-  <ul>
+<div class="work" id="text-list">
+  <ul class="rows">
     {projects.map((project, i) => (
-      <li>
-        <a href={`/portfolio-item/${project.id}/`} class="list-link" data-preview={i}>
-          {project.data.title}
+      <li data-reveal>
+        <a href={`/portfolio-item/${project.id}/`} class="row list-link" data-preview={i}>
+          <span class="label">{pad(i + 1)}</span>
+          <span class="row-title">{project.data.title}</span>
+          <span class="label row-aside">
+            {project.data.category.split(' ').join(' / ')} · {project.data.date.getFullYear()}
+          </span>
         </a>
       </li>
     ))}
@@ -29,72 +34,52 @@ const previews = await Promise.all(
 
   <div class="preview" id="preview">
     {previews.map((p, i) => (
-      <img src={p.src} alt={p.title} data-index={i} />
+      <img src={p.src} alt="" data-index={i} loading="lazy" />
     ))}
   </div>
-</section>
+</div>
 
 <style>
-  .text-list {
-    position: relative;
-    padding: 56px 0 96px;
-  }
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0 24px;
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 48px;
-    row-gap: 4px;
-  }
-  li {
-    width: auto;
-  }
-  .list-link {
-    display: inline-block;
-    white-space: nowrap;
-    font-family: var(--font-heading);
-    font-size: clamp(1.8rem, 5.5vw, 3.4rem);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
-    padding: 4px 0;
-    transition: color 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+  .row-title {
+    font-size: clamp(1.5rem, 3.4vw, 2.6rem);
   }
   .list-link:hover,
   .list-link:focus-visible {
     color: var(--color-accent);
-    transform: translateX(12px);
   }
   .preview {
     position: fixed;
     top: 0;
     left: 0;
-    width: min(300px, 36vw);
-    aspect-ratio: 1;
-    background: #000;
-    transform: translate(-50%, -100%) scale(0.9);
+    width: min(300px, 30vw);
+    aspect-ratio: 4 / 5;
+    background: var(--color-surface);
+    transform: translate(24px, -50%) scale(0.94);
     pointer-events: none;
     z-index: 40;
     opacity: 0;
-    transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+    transition: opacity 0.25s var(--ease-out), transform 0.35s var(--ease-out);
   }
   .preview.visible {
     opacity: 1;
-    transform: translate(-50%, -100%) scale(1);
+    transform: translate(24px, -50%) scale(1);
   }
   .preview img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     opacity: 0;
     transition: opacity 0.2s ease;
   }
   .preview img.active {
     opacity: 1;
+  }
+  @media (hover: none) {
+    .preview {
+      display: none;
+    }
   }
 </style>
 
@@ -104,13 +89,12 @@ const previews = await Promise.all(
   const images = document.querySelectorAll<HTMLImageElement>('.preview img');
   let activeIndex: string | null = null;
 
-  const GAP = 28;
-
   container?.addEventListener('mousemove', (e) => {
     if (!preview) return;
-    const minTop = preview.offsetHeight + 12;
-    preview.style.left = `${e.clientX}px`;
-    preview.style.top = `${Math.max(minTop, e.clientY - GAP)}px`;
+    // keep the card on screen: flip to the left of the cursor near the right edge
+    const flip = e.clientX + preview.offsetWidth + 48 > window.innerWidth;
+    preview.style.left = `${flip ? e.clientX - preview.offsetWidth - 48 : e.clientX}px`;
+    preview.style.top = `${e.clientY}px`;
 
     const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('.list-link');
     const index = link?.dataset.preview ?? null;
