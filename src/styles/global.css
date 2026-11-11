@@ -76,8 +76,7 @@ h3,
 h4 {
   font-family: var(--font-heading);
   font-weight: 700;
-  /* titles keep their authored casing (PROVOK AI Magazine), first letters raised */
-  text-transform: capitalize;
+  /* content titles render exactly as written in their markdown file */
   letter-spacing: -0.02em;
   line-height: 1.05;
 }
@@ -128,6 +127,7 @@ h1 {
   padding-top: clamp(40px, 7vw, 96px);
 }
 .page-head h1 {
+  text-transform: uppercase;
   margin: 0 0 clamp(28px, 4vw, 56px);
 }
 .page-head .lede {
@@ -154,7 +154,6 @@ h1 {
 .row .row-title {
   font-family: var(--font-heading);
   font-weight: 600;
-  text-transform: capitalize;
   letter-spacing: -0.02em;
   line-height: 1.05;
   transition: transform 0.35s var(--ease-out);
