@@ -8,8 +8,11 @@ date: 2026-10-24
 link: "https://antezala.com/"
 linkLabel: "Website"
 heroImage: "../../assets/portfolio/antezala.jpg"
+thumbnail: "../../assets/portfolio/antezala-app.jpg"
 order: 1
 ---
+
+![Antezala app: placing the altar and aisle on a real venue](../../assets/portfolio/antezala-app.jpg)
 
 Antezala is a B2B2C tool aimed at independent wedding planners and couples to visualize real, empty venues photorealistically dressed for a wedding before committing to anything.
 
