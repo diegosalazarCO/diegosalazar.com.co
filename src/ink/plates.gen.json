@@ -1,0 +1,426 @@
+{
+  "generatedBy": "tools/plates/build_plates.py",
+  "plateHeight": 2.0,
+  "atlas": {
+    "width": 1989,
+    "height": 1056
+  },
+  "plates": [
+    {
+      "id": "lucky-sheet",
+      "title": "Lucky",
+      "note": "Model sheet. Five views, and the ringed tail is the only striped part of him.",
+      "act": "paper",
+      "kind": "sheet",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.36,
+      "atlas": [
+        0.002011,
+        0.003788,
+        0.099045,
+        0.246212
+      ]
+    },
+    {
+      "id": "lucky-scratch",
+      "title": "Scratchboard",
+      "note": "White cut out of solid black, and two red marks.",
+      "act": "paper",
+      "kind": "panel",
+      "width": 1024,
+      "height": 936,
+      "depth": 0.42,
+      "atlas": [
+        0.103067,
+        0.003788,
+        0.243841,
+        0.246212
+      ]
+    },
+    {
+      "id": "troya-sheet",
+      "title": "Troya",
+      "note": "Model sheet. Dark face, white gloves, a tail that keeps going.",
+      "act": "paper",
+      "kind": "sheet",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.36,
+      "atlas": [
+        0.247863,
+        0.003788,
+        0.344897,
+        0.246212
+      ]
+    },
+    {
+      "id": "troya-three",
+      "title": "Three views",
+      "note": "Front, startled, and the back of her head.",
+      "act": "paper",
+      "kind": "sheet",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.36,
+      "atlas": [
+        0.348919,
+        0.003788,
+        0.445953,
+        0.246212
+      ]
+    },
+    {
+      "id": "troya-black",
+      "title": "Pin-up",
+      "note": "Off-model on purpose: solid black body, one red square.",
+      "act": "paper",
+      "kind": "sheet",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.36,
+      "atlas": [
+        0.449975,
+        0.003788,
+        0.547009,
+        0.246212
+      ]
+    },
+    {
+      "id": "troya-red",
+      "title": "Red block",
+      "note": "Scratchboard fur. The red is an object, never the light.",
+      "act": "paper",
+      "kind": "panel",
+      "width": 1232,
+      "height": 928,
+      "depth": 0.42,
+      "atlas": [
+        0.551031,
+        0.003788,
+        0.721971,
+        0.246212
+      ]
+    },
+    {
+      "id": "troya-wide",
+      "title": "Wide",
+      "note": "Her stare across a whole spread, one red stroke at the edge.",
+      "act": "paper",
+      "kind": "panel",
+      "width": 1536,
+      "height": 507,
+      "depth": 0.42,
+      "atlas": [
+        0.002011,
+        0.253788,
+        0.391654,
+        0.496212
+      ]
+    },
+    {
+      "id": "frontal-face",
+      "title": "Both eyes",
+      "note": "The seal dot bottom right arrived unprompted.",
+      "act": "paper",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.395676,
+        0.253788,
+        0.49271,
+        0.496212
+      ]
+    },
+    {
+      "id": "profile-eye",
+      "title": "One eye",
+      "note": "Torn paper edge, red blot. The purest line in the set.",
+      "act": "paper",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.496732,
+        0.253788,
+        0.593766,
+        0.496212
+      ]
+    },
+    {
+      "id": "fork-bowl-eyes",
+      "title": "The bowl",
+      "note": "Eyes in the black above, fork and bowl on bone paper below.",
+      "act": "paper",
+      "kind": "sheet",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.36,
+      "atlas": [
+        0.597788,
+        0.253788,
+        0.694822,
+        0.496212
+      ]
+    },
+    {
+      "id": "fork-bowl-red",
+      "title": "Fork, bowl, red",
+      "note": "The heaviest engraving texture of the ink tests.",
+      "act": "paper",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.698844,
+        0.253788,
+        0.795877,
+        0.496212
+      ]
+    },
+    {
+      "id": "light-shaft",
+      "title": "Light shaft",
+      "note": "A diagonal of light and one long fork shadow.",
+      "act": "paper",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.799899,
+        0.253788,
+        0.896933,
+        0.496212
+      ]
+    },
+    {
+      "id": "red-iris",
+      "title": "Red iris",
+      "note": "Louder than an accent. Kept as a reference, not a page.",
+      "act": "paper",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.900955,
+        0.253788,
+        0.997989,
+        0.496212
+      ]
+    },
+    {
+      "id": "portrait",
+      "title": "Portrait study",
+      "note": "The same engraving line, pointed at a person.",
+      "act": "paper",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.002011,
+        0.503788,
+        0.099045,
+        0.746212
+      ]
+    },
+    {
+      "id": "seaside",
+      "title": "By the sea",
+      "note": "Rocks, water, a few birds. The line holds outdoors too.",
+      "act": "paper",
+      "kind": "panel",
+      "width": 896,
+      "height": 1344,
+      "depth": 0.42,
+      "atlas": [
+        0.103067,
+        0.503788,
+        0.18904,
+        0.746212
+      ]
+    },
+    {
+      "id": "doorway",
+      "title": "Doorway",
+      "note": "Near-black frame, one shaft of light, a small cat inside it.",
+      "act": "night",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.193062,
+        0.503788,
+        0.290096,
+        0.746212
+      ]
+    },
+    {
+      "id": "light-wedge",
+      "title": "Light wedge",
+      "note": "Flat dark wall, a hard wedge of bone light, one red dot.",
+      "act": "night",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.294118,
+        0.503788,
+        0.391151,
+        0.746212
+      ]
+    },
+    {
+      "id": "lamp-red",
+      "title": "Lamp",
+      "note": "The red accent as a deliberate object on the nightstand.",
+      "act": "night",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.395173,
+        0.503788,
+        0.492207,
+        0.746212
+      ]
+    },
+    {
+      "id": "troya-dark-room",
+      "title": "Her best likeness",
+      "note": "Dark face, off-centre mouth mark, white gloves.",
+      "act": "night",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.496229,
+        0.503788,
+        0.593263,
+        0.746212
+      ]
+    },
+    {
+      "id": "paw-bowl",
+      "title": "The last kibble",
+      "note": "Chapter one's gesture: his paw over the bowl.",
+      "act": "night",
+      "kind": "panel",
+      "width": 1024,
+      "height": 1024,
+      "depth": 0.42,
+      "atlas": [
+        0.597285,
+        0.503788,
+        0.725993,
+        0.746212
+      ]
+    },
+    {
+      "id": "paw-watched",
+      "title": "Paw in hand",
+      "note": "A white paw in a hand, a face watching from the shadow above.",
+      "act": "night",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.730015,
+        0.503788,
+        0.827049,
+        0.746212
+      ]
+    },
+    {
+      "id": "two-pressed",
+      "title": "Pressed together",
+      "note": "Warm wedge on the wall, grey-blue bedding.",
+      "act": "night",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.831071,
+        0.503788,
+        0.928105,
+        0.746212
+      ]
+    },
+    {
+      "id": "pair-ledge",
+      "title": "The ledge",
+      "note": "Troya upright, Lucky loafed, red specks on the wall.",
+      "act": "night",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.002011,
+        0.753788,
+        0.099045,
+        0.996212
+      ]
+    },
+    {
+      "id": "pair-sofa",
+      "title": "The watch",
+      "note": "The pair on a sofa at night. The lazy one is the one awake.",
+      "act": "night",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.103067,
+        0.753788,
+        0.200101,
+        0.996212
+      ]
+    },
+    {
+      "id": "night-pair",
+      "title": "Night palette",
+      "note": "The same pair in teal, with drawn panel borders.",
+      "act": "night",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.204123,
+        0.753788,
+        0.301156,
+        0.996212
+      ]
+    },
+    {
+      "id": "asleep",
+      "title": "Asleep",
+      "note": "Closed-eye curves, pink toe beans. The house is quiet.",
+      "act": "night",
+      "kind": "panel",
+      "width": 928,
+      "height": 1232,
+      "depth": 0.42,
+      "atlas": [
+        0.305178,
+        0.753788,
+        0.402212,
+        0.996212
+      ]
+    }
+  ]
+}

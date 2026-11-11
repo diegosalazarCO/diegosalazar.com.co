@@ -1,0 +1,486 @@
+---
+/**
+ * The /ink/ page body.
+ *
+ * As plain HTML it is a gallery: every plate is a figure with its drawing and a caption, in catalog
+ * order. That is what you get with no JavaScript, with reduced motion, on Save-Data, or without a
+ * GPU. When the engine can run, the same markup becomes the flight's score: each list item turns
+ * into a tall, empty scroll section that drives the camera, and its caption floats over the canvas.
+ */
+import { ink } from './plates';
+
+const { plates } = ink;
+const total = String(plates.length).padStart(2, '0');
+const number = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<div class="ink" data-ink id="top">
+  <canvas class="canvas" data-ink-canvas aria-hidden="true"></canvas>
+
+  <header class="bar">
+    <a href="/" class="brand" aria-label="Diego Alexander Salazar, home">DIEGO</a>
+    <nav class="links" aria-label="Site">
+      <a class="label link-underline" href="/portfolio/">Work</a>
+      <a class="label link-underline" href="/blog/">Writing</a>
+      <a class="label link-underline" href="/shop/">Prints</a>
+      <button class="label toggle" type="button" data-ink-wire aria-pressed="false" title="Show the triangle mesh (W)">Mesh</button>
+    </nav>
+  </header>
+
+  <section class="intro">
+    <p class="label">Ink · {plates.length} plates</p>
+    <h1>Lucky<br />&amp; Troya</h1>
+    <p class="lede">
+      Drawings for a manga about two cats who share one home. Every one of them is a flat sheet of paper, until you
+      reach it.
+    </p>
+    <p class="label hint">Scroll to fly · the pointer carries the lamp</p>
+    <button class="btn enter" type="button" data-ink-enter hidden>Fly through instead</button>
+  </section>
+
+  <ol class="plates" data-ink-plates>
+    {
+      plates.map((plate, i) => (
+        <li class="plate" id={`plate-${plate.id}`} data-act={plate.act} data-side={i % 2 === 0 ? 'right' : 'left'}>
+          <figure>
+            <img
+              src={plate.colour}
+              width={plate.width}
+              height={plate.height}
+              alt={`${plate.title}. ${plate.note}`}
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              <p class="label">
+                {number(i)} / {total}
+              </p>
+              <h2>{plate.title}</h2>
+              <p class="note">{plate.note}</p>
+            </figcaption>
+          </figure>
+        </li>
+      ))
+    }
+  </ol>
+
+  <section class="end">
+    <p class="label">End of the roll</p>
+    <h2>Still being drawn.</h2>
+    <p class="lede">The book is in progress. New sheets land here as they are inked.</p>
+    <p class="end-links">
+      <a class="btn" href="#top">Back to the first sheet</a>
+      <a class="label link-underline" href="/shop/">Prints</a>
+      <a class="label link-underline" href="/">Home</a>
+    </p>
+  </section>
+
+  <nav class="rail" aria-label="Plates">
+    {
+      plates.map((plate, i) => (
+        <a href={`#plate-${plate.id}`} data-ink-tick aria-label={`${number(i)}. ${plate.title}`}>
+          <span />
+        </a>
+      ))
+    }
+  </nav>
+
+  <p class="label readout" data-ink-stats></p>
+</div>
+
+<script type="application/json" id="ink-data" set:html={JSON.stringify(ink)} />
+
+<script>
+  import type { InkData } from './plates';
+
+  const root = document.querySelector<HTMLElement>('[data-ink]');
+  const canvas = root?.querySelector<HTMLCanvasElement>('[data-ink-canvas]');
+  const enter = root?.querySelector<HTMLButtonElement>('[data-ink-enter]');
+  const wire = root?.querySelector<HTMLButtonElement>('[data-ink-wire]');
+  const params = new URLSearchParams(location.search);
+
+  const capable = (): boolean => {
+    if ('gpu' in navigator) return true;
+    try {
+      return !!document.createElement('canvas').getContext('webgl2');
+    } catch {
+      return false;
+    }
+  };
+
+  async function fly(): Promise<void> {
+    if (!root || !canvas) return;
+    // Switch the layout first, so the engine measures the scroll sections it will be driven by.
+    root.classList.add('is-flying');
+    try {
+      const data = JSON.parse(document.getElementById('ink-data')!.textContent!) as InkData;
+      // three.js stays out of the page until here; the gallery is readable long before it arrives
+      const { mountFlight } = await import('./engine/flight');
+      const flight = await mountFlight({ root, canvas, data, forceWebGL: params.has('gl') });
+      root.classList.add('is-ready');
+      root.dataset.backend = flight.backend;
+
+      const setWire = (on: boolean): void => {
+        flight.setWireframe(on);
+        wire?.setAttribute('aria-pressed', String(on));
+        root.classList.toggle('is-wired', on);
+      };
+      wire?.addEventListener('click', () => setWire(wire.getAttribute('aria-pressed') !== 'true'));
+      window.addEventListener('keydown', (event) => {
+        if (event.key.toLowerCase() !== 'w' || event.metaKey || event.ctrlKey || event.altKey) return;
+        setWire(wire?.getAttribute('aria-pressed') !== 'true');
+      });
+      if (params.has('mesh')) setWire(true);
+      if (params.has('debug')) (window as unknown as { __ink: typeof flight }).__ink = flight;
+    } catch (error) {
+      // No usable GPU after all: back to the gallery.
+      console.warn('ink flight unavailable', error);
+      root.classList.remove('is-flying', 'is-ready');
+    }
+  }
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const saveData = (navigator as { connection?: { saveData?: boolean } }).connection?.saveData;
+  if (capable()) {
+    if (reduced || saveData) {
+      // Respect the preference, but leave the door open.
+      if (enter) {
+        enter.hidden = false;
+        enter.addEventListener('click', () => {
+          enter.hidden = true;
+          window.scrollTo(0, 0);
+          void fly();
+        });
+      }
+    } else {
+      void fly();
+    }
+  }
+</script>
+
+<style>
+  .ink {
+    /* The page's own palette, sampled from the drawings. The engine mirrors the two world tones. */
+    --ink-paper: #e9dfc8;
+    --ink-night: #0c0a09;
+    --ink-red: #d02a1a;
+    --ink-fg: rgb(14 12 10);
+    /* Scroll length of one plate in the flight. */
+    --ink-step: 118lvh;
+
+    /* Re-point the site's tokens, so .label, .btn and links take this palette without new rules. */
+    --color-bg: var(--ink-paper);
+    --color-text: var(--ink-fg);
+    --color-muted: color-mix(in srgb, var(--ink-fg) 64%, transparent);
+    --color-accent: var(--ink-red);
+    --color-border: color-mix(in srgb, var(--ink-fg) 22%, transparent);
+
+    position: relative;
+    min-height: 100vh;
+    background: var(--ink-paper);
+    color: var(--ink-fg);
+  }
+  :global(html:has(.ink)) {
+    background: #e9dfc8;
+  }
+  :global(html:has(.ink.is-night)) {
+    background: #0c0a09;
+  }
+  .ink.is-night {
+    --color-bg: var(--ink-night);
+  }
+  .ink :global(::selection) {
+    background: var(--ink-red);
+    color: #fff;
+  }
+
+  .canvas {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    /* the largest viewport: the canvas does not resize while a phone's toolbar slides in and out */
+    height: 100lvh;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.9s var(--ease-out);
+  }
+  .is-flying .canvas {
+    display: block;
+  }
+  .is-ready .canvas {
+    opacity: 1;
+  }
+
+  /* ---- chrome ---------------------------------------------------------------------------- */
+  .bar {
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-h);
+    padding: 0 var(--gutter);
+  }
+  .is-flying .bar {
+    position: fixed;
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .links {
+    display: flex;
+    align-items: center;
+    gap: clamp(14px, 3vw, 32px);
+  }
+  .links a {
+    color: var(--ink-fg);
+  }
+  .toggle {
+    display: none;
+    background: none;
+    border: 1px solid var(--color-border);
+    padding: 6px 10px;
+    color: var(--ink-fg);
+    cursor: pointer;
+  }
+  .is-ready .toggle {
+    display: block;
+  }
+  .toggle[aria-pressed='true'] {
+    background: var(--ink-red);
+    border-color: var(--ink-red);
+    color: #fff;
+  }
+
+  /* ---- intro and end ------------------------------------------------------------------------ */
+  .intro,
+  .end {
+    position: relative;
+    z-index: 1;
+    min-height: 100lvh;
+    display: grid;
+    align-content: end;
+    justify-items: start;
+    gap: 18px;
+    padding: calc(var(--header-h) + 24px) var(--gutter) clamp(40px, 9vh, 96px);
+  }
+  .intro h1 {
+    font-size: clamp(3.4rem, 13vw, 9.5rem);
+    line-height: 0.86;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .lede {
+    max-width: 34ch;
+    margin: 0;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+  }
+  .hint {
+    display: none;
+    transition: opacity 0.5s var(--ease-out);
+  }
+  .is-flying .hint {
+    display: block;
+  }
+  .is-under-way .hint {
+    opacity: 0;
+  }
+  .enter {
+    margin-top: 6px;
+  }
+  .enter[hidden] {
+    display: none;
+  }
+  .end {
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+  }
+  .end h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.4rem, 7vw, 5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .end-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px 28px;
+    margin: 10px 0 0;
+  }
+  .end-links a:not(.btn) {
+    color: var(--ink-fg);
+  }
+
+  /* ---- plates: the gallery ----------------------------------------------------------------- */
+  .plates {
+    position: relative;
+    z-index: 1;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .plate[data-act='night'] {
+    background: var(--ink-night);
+    color: #efe6d2;
+  }
+  .plate figure {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(20px, 5vw, 64px);
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: clamp(40px, 9vh, 104px) var(--gutter);
+  }
+  .plate img {
+    width: 100%;
+    height: auto;
+    border: 1px solid currentColor;
+  }
+  figcaption h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2rem, 4.6vw, 3.6rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    margin: 10px 0 12px;
+  }
+  figcaption::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 3px;
+    margin-bottom: 16px;
+    background: var(--ink-red);
+  }
+  .plate[data-act='night'] figcaption .label {
+    color: color-mix(in srgb, currentColor 64%, transparent);
+  }
+  .note {
+    max-width: 30ch;
+    margin: 0;
+  }
+  @media (min-width: 800px) {
+    .plate figure {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+    }
+    .plate[data-side='left'] img {
+      order: 2;
+    }
+  }
+
+  /* ---- plates: the flight -------------------------------------------------------------------
+     Each item becomes an empty scroll section; its caption is pinned and faded by the engine. */
+  .is-flying .plate {
+    height: var(--ink-step);
+    background: none;
+    color: inherit;
+  }
+  .is-flying .plate figure {
+    display: block;
+    max-width: none;
+    padding: 0;
+  }
+  .is-flying .plate img {
+    display: none;
+  }
+  .is-flying figcaption {
+    position: fixed;
+    z-index: 2;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: clamp(20px, 5vh, 56px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    color: var(--ink-fg);
+  }
+  .is-flying figcaption .label,
+  .is-flying .plate[data-act='night'] figcaption .label {
+    color: var(--color-muted);
+  }
+  /* Wide screens: the sheet hangs on one side, its caption stands on the other. */
+  @media (min-aspect-ratio: 21/20) {
+    .is-flying figcaption {
+      top: 50%;
+      bottom: auto;
+      width: min(30vw, 24rem);
+      margin-top: -5.5rem;
+    }
+    .is-flying .plate[data-side='right'] figcaption {
+      left: clamp(24px, 8vw, 140px);
+      right: auto;
+    }
+    .is-flying .plate[data-side='left'] figcaption {
+      left: auto;
+      right: clamp(24px, 8vw, 140px);
+    }
+  }
+
+  /* ---- index rail and debug readout: flight only -------------------------------------------- */
+  .rail,
+  .readout {
+    display: none;
+  }
+  .is-ready .rail {
+    position: fixed;
+    z-index: 3;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+  }
+  .rail a {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 26px;
+    height: clamp(8px, 2.1vh, 16px);
+    color: var(--ink-fg);
+  }
+  .rail span {
+    display: block;
+    width: 7px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.45;
+    transition:
+      width 0.3s var(--ease-out),
+      opacity 0.3s var(--ease-out),
+      background 0.3s var(--ease-out);
+  }
+  .rail a:hover span {
+    width: 14px;
+    opacity: 1;
+  }
+  .rail a[aria-current] span {
+    width: 18px;
+    height: 2px;
+    opacity: 1;
+    background: var(--ink-red);
+  }
+  .is-wired .readout {
+    display: block;
+    position: fixed;
+    z-index: 3;
+    left: var(--gutter);
+    top: calc(var(--header-h) + 4px);
+    color: var(--ink-fg);
+  }
+  @media (pointer: coarse) {
+    .rail {
+      pointer-events: none;
+    }
+  }
+</style>
