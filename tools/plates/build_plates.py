@@ -212,13 +212,16 @@ def height_field(im: Image.Image, depth: np.ndarray, kind: str | None) -> tuple[
     if background is not None and background.any():
         # The solve is free to tilt the page a little; lay it flat again.
         height = np.clip(height - paper_floor(height, background, 0.08 * short), 0.0, None)
+    else:
+        # A panel has no blank paper to stand on, so its ground is whatever most of its edge is at.
+        height = np.clip(height - np.percentile(height[ring], 35.0), 0.0, None)
     height = np.clip(height / max(float(np.percentile(height, 99.7)), 1e-6), 0.0, 1.0)
     if background is not None:
         height *= smoothstep(0.0, 0.05, height)
 
     ys, xs = np.mgrid[0:dh, 0:dw]
     edge = np.minimum(np.minimum(xs, dw - 1 - xs), np.minimum(ys, dh - 1 - ys)).astype(np.float64)
-    height *= smoothstep(0.0, 0.05 * short, edge)
+    height *= smoothstep(0.0, 0.07 * short, edge)
     return gaussian(height, 0.7), kind
 
 

@@ -111,6 +111,42 @@ the film changes). three.js is loaded with a dynamic `import()` after the page i
 backdrop is skipped for `prefers-reduced-motion`, Save-Data, or no WebGL, where the hero falls back
 to the plain video.
 
+### Ink flight (`src/ink/`, route `/ink/`)
+
+A scroll-driven flight through the manga plates. Each drawing is a sheet of paper on a camera rail;
+as the camera reaches it the sheet rises into relief and a lamp draws the form in hatching. With no
+JavaScript, no GPU, reduced motion or Save-Data the same markup is a plain gallery.
+
+```text
+src/ink/
+  catalog.json      hand-edited: which drawings, in what order, with titles (paths into the art repo)
+  plates.gen.json   generated manifest; plates.ts joins it with the hashed asset URLs
+  InkFlight.astro   markup (gallery + flight), page palette, boot script
+  engine/
+    flight.ts         renderer, frame loop, lamp, streaming policy, resolution governor
+    rail.ts           pure maths: where plates hang and where the camera is for a scroll position
+    plate.ts          one drawing: far quad (atlas thumbnail) <-> near relief mesh, streamed in and out
+    materials.ts      every shader, in TSL (one graph -> WGSL for WebGPU, GLSL for the WebGL 2 fallback)
+    stream.ts         fetch + decode + triangulate, run in stream.worker.ts
+    rtin.ts           adaptive mesher (right-triangulated irregular network)
+    hud.ts            scroll position -> rail position; captions, index rail, text tone
+src/assets/ink/     generated: <id>.webp (drawing), <id>.relief.webp (normal + height), atlas.webp
+tools/plates/       build_plates.py, the offline pipeline that writes all of the above
+```
+
+To add or reorder drawings: edit `catalog.json`, then run (needs `pip install numpy pillow onnxruntime`;
+the depth model, named in the script header, is downloaded on first use):
+
+```
+python3 tools/plates/build_plates.py --art ../art
+```
+
+Commit the regenerated `src/assets/ink/` and `plates.gen.json`. The pipeline estimates depth, presses
+blank paper flat, compresses the depth into a bas-relief (so forms swell out of the page instead of
+standing on cliffs) and bakes a normal + height texture. No mesh is shipped: the browser triangulates
+each plate from the height channel in a worker. `/ink/?gl` forces the WebGL 2 backend, `?mesh` (or
+the W key) shows the triangulation with live triangle and draw-call counts.
+
 ### `src/lib/`
 
 - `content.ts` — `getSortedProjects()`, `getSortedPosts()`, `getPrevNext()`

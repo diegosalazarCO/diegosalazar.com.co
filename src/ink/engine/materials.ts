@@ -95,8 +95,8 @@ function screen(p: Vec2, angle: number, pitch: number, coverage: Float, warp: Fl
 
 /** Two crossing screens: the first carries light tone, the second joins in for deep shadow. */
 function hatch(p: Vec2, tone: Float, warp: Float): Float {
-  const first = screen(p, 0.62, HATCH_PITCH, clamp(tone.mul(1.5).sub(0.06), 0, 0.74), warp);
-  const second = screen(p, -0.93, HATCH_PITCH * 1.09, clamp(tone.sub(0.4).mul(1.7), 0, 0.8), warp.negate());
+  const first = screen(p, 0.62, HATCH_PITCH, clamp(tone.mul(1.25).sub(0.04), 0, 0.7), warp);
+  const second = screen(p, -0.93, HATCH_PITCH * 1.09, clamp(tone.sub(0.58).mul(1.9), 0, 0.78), warp.negate());
   return float(1).sub(float(1).sub(first).mul(float(1).sub(second)));
 }
 
@@ -109,7 +109,9 @@ function printed(albedo: Vec3, shade: Float, pool: Float, p: Vec2, size: Vec2, w
   // The red spot colour is an object, never a surface: it takes no shading and keeps glowing at night.
   const red = smoothstep(0.3, 0.52, albedo.r.sub(max(albedo.g, albedo.b)));
 
-  const ink = hatch(p, float(1).sub(shade), warp).mul(float(1).sub(red));
+  // Slopes that barely turn from the lamp stay clean paper; only real form and real shadow get ink.
+  const tone = smoothstep(0.1, 0.92, float(1).sub(shade));
+  const ink = hatch(p, tone, warp).mul(float(1).sub(red));
   const overprint = mix(vec3(0.05, 0.045, 0.04), vec3(0.3, 0.27, 0.24), world.night);
   const drawn = mix(albedo, albedo.mul(overprint), ink.mul(mix(0.94, 0.55, world.night)));
 
@@ -172,13 +174,13 @@ export function reliefMaterial(options: {
   const jitter = fract(fract(dot(screenCoordinate.xy, vec2(0.06711056, 0.00583715))).mul(52.9829189));
   let blocked: Float = float(0);
   for (let k = 0; k < options.steps; k++) {
-    const t = reach.mul(jitter.mul(0.7).add(k + 0.15).div(options.steps));
+    const t = reach.mul(jitter.mul(0.4).add(k + 0.3).div(options.steps));
     const q = point.add(toLight.mul(t));
     const quv = vec2(q.x.div(size.x).add(0.5), float(0.5).sub(q.y.div(size.y)));
     const terrain = texture(options.relief, quv).level(1.5).b.mul(lift);
-    blocked = max(blocked, terrain.sub(q.z).sub(lift.mul(0.02)).div(t.mul(distance).add(0.03)));
+    blocked = max(blocked, terrain.sub(q.z).sub(lift.mul(0.03)).div(t.mul(distance).add(0.04)));
   }
-  const shadow = float(1).sub(smoothstep(0.0, 0.24, blocked));
+  const shadow = float(1).sub(smoothstep(0.0, 0.34, blocked).mul(0.8));
 
   // Shade relative to how the flat page would be lit by the same lamp: blank paper stays blank.
   const shade = clamp(dot(normal, direction).div(max(direction.z, 0.15)), 0, 1.4).mul(shadow);
@@ -186,7 +188,7 @@ export function reliefMaterial(options: {
   const pool = clamp(float(LAMP_POWER).div(fall.mul(fall).add(1)), 0, 1);
 
   // Lines bend over the form, the way an engraver wraps hatching around a volume.
-  const warp = height.mul(lift).mul(9);
+  const warp = height.mul(lift).mul(6);
   const albedo = texture(options.colour, uv).rgb;
   material.colorNode = printed(albedo, shade, pool, p, size, warp);
   material.fog = false;
